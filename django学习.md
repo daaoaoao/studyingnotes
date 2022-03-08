@@ -270,11 +270,11 @@ def my_html(v1, v2):
 
 1、在项目根目录下创建 statics 目录。
 
-![image-20220307113505355](C:\Users\15350\AppData\Roaming\Typora\typora-user-images\image-20220307113505355.png)
+![image-20220307165555501](img/image-20220307165555501-16466433573362.png)
 
 2、在 settings 文件的最下方配置添加以下配置：
 
-![image-20220307113541427](C:\Users\15350\AppData\Roaming\Typora\typora-user-images\image-20220307113541427.png)
+![image-20220307165621724](img/image-20220307165621724-16466433827653.png)
 
 3、在 statics 目录下创建 css 目录，js 目录，images 目录，plugins 目录， 分别放 css文件，js文件，图片，插件。
 
@@ -900,4 +900,65 @@ re_path(r"^login/(?P<year>[0-9]{4})/$", views.login, name="login")
 
 ```python
 return redirect(reverse("login",kwargs={"year":3333}))
+```
+
+在模板 templates 中的 HTML 文件中，利用 **{% url "路由别名" 分组名=符合正则匹配的参数 %}** 反向解析。
+
+```html
+<form action="{% url 'login' year=3333 %}" method="post">
+```
+
+## 命名空间
+
+命名空间（英语：Namespace）是表示标识符的可见范围。
+
+一个标识符可在多个命名空间中定义，它在不同命名空间中的含义是互不相干的。
+
+一个新的命名空间中可定义任何标识符，它们不会与任何重复的标识符发生冲突，因为重复的定义都处于其它命名空间中。
+
+**存在问题：**路由别名 name 没有作用域，Django 在反向解析 URL 时，会在项目全局顺序搜索，当查找到第一个路由别名 name 指定 URL 时，立即返回。当在不同的 app 目录下的urls 中定义相同的路由别名 name 时，可能会导致 URL 反向解析错误。
+
+**解决：**使用命名空间。
+
+### 普通路径
+
+```
+include(("app名称：urls"，"app名称"))
+```
+
+实例：
+
+```
+path("app01/", include(("app01.urls","app01"))) 
+path("app02/", include(("app02.urls","app02")))
+```
+
+在 app01/urls.py 中起相同的路由别名。
+
+```
+path("login/", views.login, name="login")
+```
+
+在 views.py 中使用名称空间，语法格式如下：
+
+```
+reverse("app名称：路由别名")
+```
+
+实例：
+
+```
+return redirect(reverse("app01:login")
+```
+
+在 templates 模板的 HTML 文件中使用名称空间，语法格式如下：
+
+```
+{% url "app名称：路由别名" %}
+```
+
+实例：
+
+```
+<form action="{% url 'app01:login' %}" method="post">
 ```

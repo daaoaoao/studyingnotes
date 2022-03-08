@@ -1,3 +1,13 @@
+# 一些函数
+
+isdigit() 判断char是否是数字
+
+stoi()字符串变换为数字
+
+## find()函数
+
+
+
 # GUN的c/c++b编译器
 
 ```
@@ -677,7 +687,35 @@ for_each(vs.begin(), vs.end(), PrintString(cerr, '\n'));
 
 [完整介绍](https://xiaomaweifu.blog.csdn.net/article/details/81326699?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ELandingCtr%7ERate-1.queryctrv4&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ELandingCtr%7ERate-1.queryctrv4&utm_relevant_index=2)
 
+虚函数的作用和实现原理，什么是虚函数,有什么作用?
 
+```
+C++的多态分为静态多态（编译时多态）和动态多态（运行时多态）两大类。静态多态通过重载、模板来实现；动态多态就是通过本文的主角虚函数来体现的。	
+	
+虚函数实现原理:包括虚函数表、虚函数指针等 
+
+虚函数的作用说白了就是：当调用一个虚函数时，被执行的代码必须和调用函数的对象的动态类型相一致。编译器需要做的就是如何高效的实现提供这种特性。不同编译器实现细节也不相同。大多数编译器通过vtbl（virtual table）和vptr（virtual table pointer）来实现的。 当一个类声明了虚函数或者继承了虚函数，这个类就会有自己的vtbl。vtbl实际上就是一个函数指针数组，有的编译器用的是链表，不过方法都是差不多。vtbl数组中的每一个元素对应一个函数指针指向该类的一个虚函数，同时该类的每一个对象都会包含一个vptr，vptr指向该vtbl的地址。
+```
+
+
+
+结论：
+
+```
+每个声明了虚函数或者继承了虚函数的类，都会有一个自己的vtbl
+同时该类的每个对象都会包含一个vptr去指向该vtbl
+虚函数按照其声明顺序放于vtbl表中, vtbl数组中的每一个元素对应一个函数指针指向该类的虚函数
+如果子类覆盖了父类的虚函数，将被放到了虚表中原来父类虚函数的位置
+在多继承的情况下，每个父类都有自己的虚表。子类的成员函数被放到了第一个父类的表中
+```
+
+
+
+衍生问题:为什么 C++里访问虚函数比访问普通函数慢?
+
+```
+单继承时性能差不多，多继承的时候会慢
+```
 
 # STL 教程
 
@@ -695,6 +733,28 @@ C++ 标准模板库的核心包括以下三个组件：
 - size( ) 函数显示向量的大小。
 - begin( ) 函数返回一个指向向量开头的迭代器。
 - end( ) 函数返回一个指向向量末尾的迭代器。
+
+# pair
+
+![img](img/092204364017544-16467461903072.jpg)
+
+
+
+```c++
+//例题代码
+pair<string, int>p;
+	typedef vector< pair<string, int> > VP;
+	VP vp;
+	for (int i = 0; i < 5; i++) {
+		cin >> p.first >> p.second;
+		vp.push_back(make_pair(p.first, p.second));
+	}
+	VP::iterator it;
+	for (it = vp.begin(); it != vp.end(); it++)
+		cout << it->first << "," << it->second << endl;
+```
+
+
 
 # C++ 标准库
 
