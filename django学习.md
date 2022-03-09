@@ -608,6 +608,12 @@ def datadel(request):
     return HttpResponse("<p>删除成功</p>")
 ```
 
+## 数据好后的流程
+
+python manage.py makemigrations //存在子应用的migrations目录里面
+
+python manage.py migrate 执行迁移
+
 # Django表单
 
 ## HTTP 请求
@@ -962,3 +968,42 @@ return redirect(reverse("app01:login")
 ```
 <form action="{% url 'app01:login' %}" method="post">
 ```
+
+# Django Admin 管理工具
+
+```python
+python manage.py createsuperuser
+```
+
+使用管理工具
+
+model里面定义
+
+admin里面注册
+
+## 自定义表单
+
+定义后台显示样式与添加方式
+
+## 内联(Inline)显示
+
+可以让有关系的数据在一页显示
+
+## 列表页的显示
+
+在指定列表下可以设置list_display属性来显示内容
+
+```python
+list_display = ('name', 'age', 'email')
+```
+
+当有大量数据时候也可以search_fields来显示搜索栏
+
+```python
+search_fields = ("name",)
+```
+
+andmin官网文档里面还有很多实用功能，可以参照官方文档来学习
+
+
+
