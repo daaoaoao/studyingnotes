@@ -1005,5 +1005,475 @@ search_fields = ("name",)
 
 andmin官网文档里面还有很多实用功能，可以参照官方文档来学习
 
+# Django orm -单表实例
 
+**方式1**：模型类实例化对象
+
+需从 app 目录引入 models.py 文件：
+
+```
+from app 目录 import models
+```
+
+并且实例化对象后要执行 **对象.save()** 才能在数据库中新增成功。
+
+**方式二：**通过 ORM 提供的 objects 提供的方法 create 来实现（推荐）
+
+```python
+books = models.Book.objects.create(title="如来神掌",price=200,publish="功夫出版社",pub_date="2010-10-10") 
+```
+
+### 查找
+
+使用 **all()** 方法来查询所有内容。
+
+返回的是 QuerySet 类型数据，类似于 list，里面放的是一个个模型类的对象，可用索引下标取出模型类的对象。
+
+```python
+ books = models.Book.objects.all()
+```
+
+## **filter()** 方法
+
+用于查询符合条件的数据。
+
+返回的是 QuerySet 类型数据，类似于 list，里面放的是满足条件的模型类的对象，可用索引下标取出模型类的对象。
+
+pk=3 的意思是主键 primary key=3，相当于 id=3。
+
+因为 id 在 pycharm 里有特殊含义，是看内存地址的内置函数 id()，因此用 pk。
+
+```python
+ books = models.Book.objects.filter(pk=5)
+    
+ books = models.Book.objects.filter(publish='菜鸟出版社', price=300)
+```
+
+## **exclude()** 方法
+
+用于查询不符合条件的数据。
+
+返回的是 QuerySet 类型数据，类似于 list，里面放的是不满足条件的模型类的对象，可用索引下标取出模型类的对象。
+
+```python
+books = models.Book.objects.exclude(pk=5)
+```
+
+## **get()** 方法
+
+用于查询符合条件的返回模型类的对象符合条件的对象只能为一个，如果符合筛选条件的对象超过了一个或者没有一个都会抛出错误。
+
+```python
+books = models.Book.objects.get(pk=5)
+books = models.Book.objects.get(pk=18)  # 报错，没有符合条件的对象
+books = models.Book.objects.get(price=200)  # 报错，符合条件的对象超过一个
+```
+
+## **order_by()** 方法
+
+用于对查询结果进行排序。
+
+返回的是 QuerySet类型数据，类似于list，里面放的是排序后的模型类的对象，可用索引下标取出模型类的对象。
+
+**注意：**
+
+- a、参数的字段名要加引号。
+- b、降序为在字段前面加个负号 **-**。
+
+```python
+books = models.Book.objects.order_by("price") # 查询所有，按照价格升序排列 
+books = models.Book.objects.order_by("-price") # 查询所有，按照价格降序排列
+```
+
+## **reverse()** 方法
+
+用于对查询结果进行反转。
+
+返回的是 QuerySe t类型数据，类似于 list，里面放的是反转后的模型类的对象，可用索引下标取出模型类的对象。
+
+```python
+books = models.Book.objects.order_by("-price").reverse()
+```
+
+## **count()** 方法
+
+用于查询数据的数量返回的数据是整数。
+
+```python
+books = models.Book.objects.count() # 查询所有数据的数量 
+books = models.Book.objects.filter(price=200).count() # 查询符合条件数据的数量
+```
+
+## **first()** 方法
+
+返回第一条数据返回的数据是模型类的对象也可以用索引下标 **[0]**。
+
+```python
+books = models.Book.objects.first() # 返回所有数据的第一条数据
+```
+
+last() 方法返回最后一条数据返回的数据是模型类的对象不能用索引下标 **[-1]**，ORM 没有逆序索引。
+
+```python
+books = models.Book.objects.last() # 返回所有数据的最后一条数据
+```
+
+## **exists()** 方法
+
+用于判断查询的结果 QuerySet 列表里是否有数据。
+
+返回的数据类型是布尔，有为 true，没有为 false。
+
+**注意：**判断的数据类型只能为 QuerySet 类型数据，不能为整型和模型类的对象。
+
+```python
+books = models.Book.objects.exists()
+    # 报错，判断的数据类型只能为QuerySet类型数据，不能为整型
+books = models.Book.objects.count().exists()
+    # 报错，判断的数据类型只能为QuerySet类型数据，不能为模型类对象
+books = models.Book.objects.first().exists()  
+```
+
+## **values()** 方法
+
+用于查询部分字段的数据。
+
+返回的是 QuerySet 类型数据，类似于 list，里面不是模型类的对象，而是一个可迭代的字典序列，字典里的键是字段，值是数据。
+
+**注意：**
+
+- 参数的字段名要加引号
+- 想要字段名和数据用 **values**
+
+```python
+# 查询所有的id字段和price字段的数据
+books = models.Book.objects.values("pk","price")
+```
+
+## **values_list()** 方法
+
+用于查询部分字段的数据。
+
+返回的是 QuerySet 类型数据，类似于 list，里面不是模型类的对象，而是一个个元组，元组里放的是查询字段对应的数据。
+
+**注意：**
+
+- 参数的字段名要加引号
+- 只想要数据用 values_list
+
+```python
+# 查询所有的price字段和publish字段的数据
+books = models.Book.objects.values_list("price","publish")
+print(books[0][0],type(books)) # 得到的是第一条记录的price字段的数据
+```
+
+## **distinct()** 方法
+
+用于对数据进行去重。
+
+返回的是 QuerySet 类型数据。
+
+**注意：**
+
+- 对模型类的对象去重没有意义，因为每个对象都是一个不一样的存在。
+- distinct() 一般是联合 values 或者 values_list 使用。
+
+```python
+ # 查询一共有多少个出版社
+    books = models.Book.objects.values_list("publish").distinct() # 对模型类的对象去重没有意义，因为每个对象都是一个不一样的存在。
+    books = models.Book.objects.distinct()
+```
+
+## **filter()** 方法
+
+基于双下划线的模糊查询（exclude 同理）。
+
+**注意：**filter 中运算符号只能使用等于号 = ，不能使用大于号 > ，小于号 < ，等等其他符号。
+
+__in 用于读取区间，= 号后面为列表 。
+
+```python
+# 查询价格为200或者300的数据
+    books = models.Book.objects.filter(price__in=[200,300])
+```
+
+**__gt** 大于号 ，= 号后面为数字。
+
+```
+# 查询价格大于200的数据 
+books = models.Book.objects.filter(price__gt=200)
+```
+
+**__gte** 大于等于，= 号后面为数字。
+
+```
+# 查询价格大于等于200的数据 
+books = models.Book.objects.filter(price__gte=200)
+```
+
+**__lt** 小于，=号后面为数字。
+
+```
+# 查询价格小于300的数据 
+books=models.Book.objects.filter(price__lt=300)
+```
+
+**__lte** 小于等于，= 号后面为数字。
+
+```
+# 查询价格小于等于300的数据 
+books=models.Book.objects.filter(price__lte=300)
+```
+
+**__range** 在 ... 之间，左闭右闭区间，= 号后面为两个元素的列表。
+
+```python
+books=models.Book.objects.filter(price__range=[200,300])
+```
+
+**__contains** 包含，= 号后面为字符串。
+
+```python
+books=models.Book.objects.filter(title__contains="菜")
+```
+
+**__icontains** 不区分大小写的包含，= 号后面为字符串。
+
+```python
+books=models.Book.objects.filter(title__icontains="python") # 不区分大小写
+```
+
+**__startswith** 以指定字符开头，= 号后面为字符串。
+
+```python
+books=models.Book.objects.filter(title__startswith="菜")
+```
+
+**__endswith** 以指定字符结尾，= 号后面为字符串。
+
+```
+books=models.Book.objects.filter(title__endswith="教程")
+```
+
+**__year** 是 DateField 数据类型的年份，= 号后面为数字。
+
+```
+books=models.Book.objects.filter(pub_date__year=2008) 
+```
+
+**__month** 是DateField 数据类型的月份，= 号后面为数字。
+
+```
+books=models.Book.objects.filter(pub_date__month=10) 
+```
+
+**__day** 是DateField 数据类型的天数，= 号后面为数字。
+
+```
+books=models.Book.objects.filter(pub_date__day=01)
+```
+
+### 删除
+
+**方式一：**使用模型类的 **对象.delete()**。
+
+**返回值：**元组，第一个元素为受影响的行数。
+
+```
+books=models.Book.objects.filter(pk=8).first().delete()
+```
+
+**方式二**：使用 QuerySet **类型数据.delete()**(推荐)
+
+**返回值：**元组，第一个元素为受影响的行数。
+
+```
+books=models.Book.objects.filter(pk__in=[1,2]).delete()
+```
+
+**注意：**
+
+- a. Django 删除数据时，会模仿 SQL约束 ON DELETE CASCADE 的行为，也就是删除一个对象时也会删除与它相关联的外键对象。
+- b. delete() 方法是 QuerySet 数据类型的方法，但并不适用于 Manager 本身。也就是想要删除所有数据，不能不写 all。
+
+```
+books=models.Book.objects.delete()　 # 报错
+books=models.Book.objects.all().delete()　　 # 删除成功
+```
+
+### 修改
+
+**方式一：**
+
+```
+模型类的对象.属性 = 更改的属性值
+模型类的对象.save()
+```
+
+**返回值：**编辑的模型类的对象。
+
+```
+books = models.Book.objects.filter(pk=7).first() 
+books.price = 400 
+books.save()
+```
+
+**方式二：**QuerySet 类型数据.update(字段名=更改的数据)（推荐）
+
+**返回值：**整数，受影响的行数
+
+```python
+books = models.Book.objects.filter(pk__in=[7,8]).update(price=888)
+```
+
+# Django ORM -多表
+
+三种
+
+一对一 unique
+
+一对多 外键
+
+多对多 第三张表来进行关联
+
+```python
+# EmailField 数据类型是邮箱格式，底层继承 CharField，进行了封装，相当于 MySQL 中的 varchar。
+# OneToOneField = ForeignKey(...，unique=True)设置一对一。
+# 若有模型类存在外键，创建数据时，要先创建外键关联的模型类的数据，不然创建包含外键的模型类的数据时，外键的关联模型类的数据会找不到。
+id = models.AutoField(primary_key=True)  # id 自动创建，也可手写
+title = models.CharField(max_length=32)   # book_name
+price = models.DecimalField(max_digits=5, decimal_places=2)  #b ook_price
+pub_date = models.DateField()  # 出版时间
+    publish = models.ForeignKey("Publish", on_delete=models.CASCADE)   # 出版社名称
+    authors = models.ManyToManyField("Authors"
+                                     
+```
+
+### 遇到问题
+
+之前数据对后迁移造成影响，删除migrate下除_init_.py的文件再重新执行
+
+## orm 添加数据
+
+一对多(ForeignKey)
+
+**方式一:** 传对象的形式，返回值的数据类型是对象，书籍对象。
+
+**步骤：**
+
+- a. 获取出版社对象
+- b. 给书籍的出版社属性 pulish 传出版社对象
+
+```python
+#  获取出版社对象
+    pub_obj = models.Publish.objects.filter(pk=1).first()
+    #  给书籍的出版社属性publish传出版社对象
+    book = models.Book.objects.create(title="菜鸟教程", price=200, pub_date="2010-10-10", publish=pub_obj)
+```
+
+方式二: 传对象 id 的形式(由于传过来的数据一般是 id,所以传对象 id 是常用的)。
+
+一对多中，设置外键属性的类(多的表)中，MySQL 中显示的字段名是:**外键属性名_id**。
+
+返回值的数据类型是对象，书籍对象。
+
+**步骤：**
+
+- a. 获取出版社对象的 id
+- b. 给书籍的关联出版社字段 pulish_id 传出版社对象的 id
+
+```python
+#  获取出版社对象
+    pub_obj = models.Publish.objects.filter(pk=1).first()
+    #  获取出版社对象的id
+    pk = pub_obj.pk
+    #  给书籍的关联出版社字段 publish_id 传出版社对象的id
+    book = models.Book.objects.create(title="冲灵剑法", price=100, pub_date="2004-04-04", publish_id=pk)
+```
+
+### 多对多(ManyToManyField)：在第三张关系表中新增数据
+
+**方式一:** 传对象形式，无返回值。
+
+**步骤：**
+
+- a. 获取作者对象
+- b. 获取书籍对象
+- c. 给书籍对象的 authors 属性用 add 方法传作者对象
+
+```python
+#  获取作者对象
+    chong = models.Author.objects.filter(name="令狐冲").first()
+    ying = models.Author.objects.filter(name="任盈盈").first()
+    #  获取书籍对象
+    book = models.Book.objects.filter(title="菜鸟教程").first()
+    #  给书籍对象的 authors 属性用 add 方法传作者对象
+    book.authors.add(chong, ying)
+```
+
+**方式二:** 传对象id形式，无返回值。
+
+**步骤：**
+
+- a. 获取作者对象的 id
+- b. 获取书籍对象
+- c. 给书籍对象的 authors 属性用 add 方法传作者对象的 id
+
+```python
+ #  获取作者对象
+    chong = models.Author.objects.filter(name="令狐冲").first()
+    #  获取作者对象的id
+    pk = chong.pk
+    #  获取书籍对象
+    book = models.Book.objects.filter(title="冲灵剑法").first()
+    #  给书籍对象的 authors 属性用 add 方法传作者对象的id
+    book.authors.add(pk)
+```
+
+### 关联管理器(对象调用)
+
+**前提：**
+
+- 多对多（双向均有关联管理器）
+- 一对多（只有多的那个类的对象有关联管理器，即反向才有）
+
+**语法格式：**
+
+```
+正向：属性名
+反向：小写类名加 _set
+```
+
+**注意：**一对多只能反向
+
+**常用方法：**
+
+**add()**：用于多对多，把指定的模型对象添加到关联对象集（关系表）中。
+
+**注意：**add() 在一对多(即外键)中，只能传对象（ *QuerySet数据类型），不能传 id（*[id表]）。
+
+***[ ]** 的使用:
+
+\# 方式一：传对象
+
+```python
+book_obj = models.Book.objects.get(id=10)
+author_list = models.Author.objects.filter(id__gt=2)
+book_obj.authors.add(*author_list) # 将 id 大于2的作者对象添加到这本书的作者集合中
+
+# 方式二：传对象 id
+book_obj.authors.add(*[1,3]) # 将 id=1 和 id=3 的作者对象添加到这本书的作者集合中
+**return** HttpResponse("ok")
+```
+
+**create()**：创建一个新的对象，并同时将它添加到关联对象集之中。
+
+返回新创建的对象。
+
+```python
+pub = models.Publish.objects.filter(name="明教出版社").first()
+wo = models.Author.objects.filter(name="任我行").first()
+book = wo.book_set.create(title="吸星大法", price=300, pub_date="1999-9-19", publish=pub)
+print(book, type(book))
+```
 
