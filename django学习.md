@@ -1477,3 +1477,948 @@ book = wo.book_set.create(title="吸星大法", price=300, pub_date="1999-9-19",
 print(book, type(book))
 ```
 
+**remove()**：从关联对象集中移除执行的模型对象。
+
+对于 ForeignKey 对象，这个方法仅在 null=True（可以为空）时存在，无返回值。
+
+实例
+
+```python
+author_obj =models.Author.objects.get(id=1)
+book_obj = models.Book.objects.get(id=11)
+author_obj.book_set.remove(book_obj)
+**return** HttpResponse("ok")
+```
+
+**clear()**：从关联对象集中移除一切对象，删除关联，不会删除对象。
+
+对于 ForeignKey 对象，这个方法仅在 null=True（可以为空）时存在。
+
+无返回值。
+
+```python
+#  清空独孤九剑关联的所有作者
+book = models.Book.objects.filter(title="菜鸟教程").first()
+book.authors.clear()
+```
+
+## ORM 查询
+
+基于对象的跨表查询。
+
+```
+正向：属性名称
+反向：小写类名_set
+```
+
+### 一对多
+
+查询主键为 1 的书籍的出版社所在的城市（正向）。
+
+实例
+
+```python
+book = models.Book.objects.filter(pk=10).first()
+res = book.publish.city
+print(res, type(res))
+return HttpResponse("ok")
+```
+
+查询明教出版社出版的书籍名（反向）。
+
+反向：**对象.小写类名_set(pub.book_set)** 可以跳转到关联的表(书籍表)。
+
+**pub.book_set.all()**：取出书籍表的所有书籍对象，在一个 QuerySet 里，遍历取出一个个书籍对象。
+
+实例
+
+```python
+pub = models.Publish.objects.filter(name="明教出版社").first()`
+res = pub.book_set.all()`
+for i in res:
+    print(i.title)`
+    return HttpResponse("ok")
+```
+
+一对一
+查询令狐冲的电话（正向）
+
+正向：对象.属性 (author.au_detail) 可以跳转到关联的表(作者详情表)
+
+实例
+
+```python
+author = models.Author.objects.filter(name="令狐冲").first()
+res = author.au_detail.tel
+print(res, type(res))
+return HttpResponse("ok")
+```
+
+查询所有住址在黑木崖的作者的姓名（反向）。
+
+一对一的反向，用 **对象.小写类名** 即可，不用加 _set。
+
+反向：对象.小写类名(addr.author)可以跳转到关联的表(作者表)。
+
+实例
+
+```python
+addr = models.AuthorDetail.objects.filter(addr="黑木崖").first()
+res = addr.author.name
+print(res, type(res))
+return HttpResponse("ok")
+```
+
+### 多对多
+
+菜鸟教程所有作者的名字以及手机号（正向）。
+
+正向：**对象.属性(book.authors)**可以跳转到关联的表(作者表)。
+
+作者表里没有作者电话，因此再次通过**对象.属性(i.au_detail)**跳转到关联的表（作者详情表）。
+
+实例
+
+```python
+book = models.Book.objects.filter(title="菜鸟教程").first()
+res = book.authors.all()
+for i in res:
+    print(i.name, i.au_detail.tel)
+return HttpResponse("ok")
+```
+
+查询任我行出过的所有书籍的名字（反向）。
+
+```python
+author = models.Author.objects.filter(name="任我行").first()
+res = author.book_set.all()
+for i in res:
+    print(i.title)
+return HttpResponse("ok")
+```
+
+## 基于双下划线的跨表查询
+
+### 正向：属性名称__跨表的属性名称 反向：小写类名__跨表的属性名称
+
+### 一对多
+
+查询菜鸟出版社出版过的所有书籍的名字与价格。
+
+```python
+res = models.Book.objects.filter(publish__name="菜鸟出版社").values_list("title", "price")
+```
+
+### 多对多
+
+查询任我行出过的所有书籍的名字。
+
+正向：通过 属性名称__跨表的属性名称(authors__name) 跨表获取数据：
+
+```python
+res = models.Book.objects.filter(authors__name="任我行").values_list("title")
+```
+
+反向：通过 小写类名__跨表的属性名称（book__title） 跨表获取数据：
+
+```python
+res = models.Author.objects.filter(name="任我行").values_list("book__title")
+```
+
+### 一对一
+
+查询任我行的手机号。
+
+正向：通过 **属性名称__跨表的属性名称(au_detail__tel)** 跨表获取数据。
+
+```python
+res = models.Author.objects.filter(name="任我行").values_list("au_detail__tel")
+```
+
+反向：通过 **小写类名__跨表的属性名称（author__name）** 跨表获取数据。
+
+```
+res = models.AuthorDetail.objects.filter(author__name="任我行").values_list("tel")
+```
+
+# 聚合查询
+
+聚合查询函数是对一组值执行计算，并返回单个值。
+
+Django 使用聚合查询前要先从 django.db.models 引入 Avg、Max、Min、Count、Sum（首字母大写）。
+
+```
+from django.db.models import Avg,Max,Min,Count,Sum  #   引入函数
+```
+
+聚合查询返回值的数据类型是字典。
+
+聚合函数 aggregate() 是 QuerySet 的一个终止子句， 生成的一个汇总值，相当于 count()。
+
+使用 aggregate() 后，数据类型就变为字典，不能再使用 QuerySet 数据类型的一些 API 了。
+
+日期数据类型(DateField)可以用 Max 和 Min。
+
+返回的字典中：键的名称默认是（属性名称加上__聚合函数名），值是计算出来的聚合值。
+
+如果要自定义返回字典的键的名称，可以起别名：
+
+```
+aggregate(别名 = 聚合函数名("属性名称"))
+```
+
+计算所有图书的平均价格:
+
+```python
+res = models.Book.objects.aggregate(Avg("price"))
+```
+
+## 分组查询（annotate）
+
+分组查询一般会用到聚合函数，所以使用前要先从 django.db.models 引入 Avg,Max,Min,Count,Sum（首字母大写）。
+
+```
+from django.db.models import Avg,Max,Min,Count,Sum  #   引入函数
+```
+
+**返回值：**
+
+- 分组后，用 values 取值，则返回值是 QuerySet 数据类型里面为一个个字典；
+- 分组后，用 values_list 取值，则返回值是 QuerySet 数据类型里面为一个个元组。
+
+MySQL 中的 limit 相当于 ORM 中的 QuerySet 数据类型的切片。
+
+**注意：**
+
+annotate 里面放聚合函数。
+
+- **values 或者 values_list 放在 annotate 前面：**values 或者 values_list 是声明以什么字段分组，annotate 执行分组。
+- **values 或者 values_list 放在annotate后面：** annotate 表示直接以当前表的pk执行分组，values 或者 values_list 表示查询哪些字段， 并且要将 annotate 里的聚合函数起别名，在 values 或者 values_list 里写其别名。
+
+统计每一本以"菜"开头的书籍的作者个数：
+
+```python
+res = models.Book.objects.filter(title__startswith="菜").annotate(c = Count("authors__name")).values("title","c")
+```
+
+统计每一本书的作者个数：
+
+res = models.Book.objects.annotate(c = Count("authors__name")).values("title","c")
+
+根据一本图书作者数量的多少对查询集 QuerySet 进行降序排序:
+res = models.Book.objects.annotate(c = Count("authors__name")).order_by("-c").values("title","c")
+
+查询各个作者出的书的总价格:
+res = models.Author.objects.annotate(all = Sum("book__price")).values("name","all")
+
+### F() 查询
+
+F() 的实例可以在查询中引用字段，来比较同一个 model 实例中两个不同字段的值。
+
+之前构造的过滤器都只是将字段值与某个常量做比较，如果想要对两个字段的值做比较，就需要用到 F()。
+
+使用前要先从 django.db.models 引入 F:
+
+```
+from django.db.models import F
+```
+
+**用法：**
+
+```
+F("字段名称")
+```
+
+F 动态获取对象字段的值，可以进行运算。
+
+Django 支持 F() 对象之间以及 F() 对象和常数之间的加减乘除和取余的操作。
+
+修改操作（update）也可以使用 F() 函数。
+
+查询工资大于年龄的人：
+
+```python
+from django.db.models import F
+...
+book=models.Emp.objects.filter(salary__gt=F("age")).values("name","age")
+...
+```
+
+将每一本书的价格提高100元:
+
+res = models.Book.objects.update(price=F("price")+100)
+
+### Q() 查询
+
+```
+from django.db.models import Q
+```
+
+用法：
+
+```
+Q(条件判断)
+```
+
+例如：
+
+```
+Q(title__startswith="菜")
+```
+
+之前构造的过滤器里的多个条件的关系都是 and，如果需要执行更复杂的查询（例如 or 语句），就可以使用 Q 。
+
+Q 对象可以使用 & | ~ （与 或 非）操作符进行组合。
+
+优先级从高到低：~ & |。
+
+可以混合使用 Q 对象和关键字参数，Q 对象和关键字参数是用"and"拼在一起的（即将逗号看成 and ），但是 Q 对象必须位于所有关键字参数的前面。
+
+查询价格大于 350 或者名称以菜开头的书籍的名称和价格。
+`res=models.Book.objects.filter(Q(price__gt=350)|Q(title__startswith="菜")).values("title","price")`
+
+查询以"菜"结尾或者不是 2010 年 10 月份的书籍:
+
+`res = models.Book.objects.filter(Q(title__endswith="菜") | ~Q(Q(pub_date__year=2010) & Q(pub_date__month=10)))`
+
+查询出版日期是 2004 或者 1999 年，并且书名中包含有"菜"的书籍。
+
+Q 对象和关键字混合使用，Q 对象要在所有关键字的前面:
+
+`res = models.Book.objects.filter(Q(pub_date__year=2004) | Q(pub_date__year=1999), title__contains="菜")`
+
+# Django form组件
+
+Django Form 组件用于对页面进行初始化，生成 HTML 标签，此外还可以对用户提交对数据进行校验（显示错误信息）。
+
+**报错信息显示顺序：**
+
+- 先显示字段属性中的错误信息，然后再显示局部钩子的错误信息。
+- 若显示了字段属性的错误信息，就不会显示局部钩子的错误信息。
+- 若有全局钩子，则全局钩子是等所有的数据都校验完，才开始进行校验，并且全局钩子的错误信息一定会显示。
+
+使用 Form 组件，需要先导入 forms：
+
+```
+from django import forms
+```
+
+- **label**：输入框前面的文本信息。
+- **error_message**：自定义显示的错误信息，属性值是字典， 其中 required 为设置不能为空时显示的错误信息的 key
+
+### 局部钩子和全局钩子
+
+```python
+from django import forms
+from django.core.exceptions import ValidationError
+from app01 import models
+class EmpForm(forms.Form):
+    name = forms.CharField(min_length=5, label="姓名", error_messages={"required": "该字段不能为空!", "min_length": "用户名太短。"})
+    age = forms.IntegerField(label="年龄")
+    salary = forms.DecimalField(max_digits=5, decimal_places=2, label="工资")
+    r_salary = forms.DecimalField(max_digits=5, decimal_places=2, label="请再输入工资")
+    def clean_name(self):  # 局部钩子
+        val = self.cleaned_data.get("name")
+        if val.isdigit():
+            raise ValidationError("用户名不能是纯数字")
+        elif models.Emp.objects.filter(name=val):
+            raise ValidationError("用户名已存在！")
+        else:
+            return val
+    def clean(self):  # 全局钩子 确认两次输入的工资是否一致。
+        val = self.cleaned_data.get("salary")
+        r_val = self.cleaned_data.get("r_salary")
+        if val == r_val:
+            return self.cleaned_data
+        else:
+            raise ValidationError("请确认工资是否一致。")
+```
+
+# Django 用户认证（Auth）组件
+
+Django 用户认证（Auth）组件一般用在用户的登录注册上，用于判断当前的用户是否合法，并跳转到登陆成功或失败页面。
+
+Django 用户认证（Auth）组件需要导入 auth 模块:
+
+```
+# 认证模块
+from django.contrib import auth
+
+# 对应数据库
+from django.contrib.auth.models import User
+```
+
+返回值是用户对象。
+
+创建用户对象的三种方法：
+
+- **create()**：创建一个普通用户，密码是明文的。
+- **create_user()**：创建一个普通用户，密码是密文的。
+- **create_superuser()**：创建一个超级用户，密码是密文的，要多传一个邮箱 email 参数。
+
+**参数：**
+
+- username: 用户名。
+- password：密码。
+- email：邮箱 (create_superuser 方法要多加一个 email)。
+
+```python
+from django.contrib.auth.models import User 
+User.objects.create(username='runboo',password='123')
+
+from django.contrib.auth.models import User 
+User.objects.create_superuser(username='runboooo',password='123',email='runboo@163.com')
+```
+
+验证用户的用户名和密码使用 authenticate() 方法，从需要 auth_user 表中过滤出用户对象。
+
+使用前要导入：
+
+```
+from django.contrib import auth
+```
+
+参数：
+
+- username：用户名
+- password：密码
+
+**返回值：**如果验证成功，就返回用户对象，反之，返回 None。
+
+```python
+def login(request):
+    if request.method == "GET":
+        return render(request, "login.html")
+    username = request.POST.get("username")
+    password = request.POST.get("pwd")
+    valid_num = request.POST.get("valid_num")
+    keep_str = request.session.get("keep_str")
+    if keep_str.upper() == valid_num.upper():
+        user_obj = auth.authenticate(username=username, password=password)
+        print(user_obj.username)
+```
+
+给验证成功的用户加 session，将 request.user 赋值为用户对象。
+
+使用前要导入：
+
+```
+from django.contrib import auth
+```
+
+参数：
+
+- request：用户对象
+
+返回值：None
+
+```python
+def login(request):
+    if request.method == "GET":
+        return render(request, "login.html")
+    username = request.POST.get("username")
+    password = request.POST.get("pwd")
+    valid_num = request.POST.get("valid_num")
+    keep_str = request.session.get("keep_str")
+    if keep_str.upper() == valid_num.upper():
+        user_obj = auth.authenticate(username=username, password=password)
+        print(user_obj.username)
+        if not user_obj:
+            return redirect("/login/")
+        else:
+            auth.login(request, user_obj)
+            path = request.GET.get("next") or "/index/"
+            print(path)
+            return redirect(path)
+    else:
+        return redirect("/login/")
+```
+
+注销用户使用 logout() 方法，需要清空 session 信息，将 request.user 赋值为匿名用户。
+
+使用前要导入：
+
+```
+from django.contrib import auth
+```
+
+参数：
+
+- request：用户对象
+
+返回值：None
+
+```python
+def logout(request):
+    ppp = auth.logout(request)
+    print(ppp) # None
+    return redirect("/login/")
+```
+
+设置装饰器，给需要登录成功后才能访问的页面统一加装饰器。
+
+使用前要导入：
+
+```
+from django.contrib.auth.decorators import login_required
+```
+
+## 实例
+
+```python
+from django.contrib.auth.decorators import login_required @login_required
+def index(request):
+  return HttpResponse("index页面。。。")
+```
+
+设置从哪个页面访问，登录成功后就返回哪个页面。
+
+**解析：**
+
+django 在用户访问页面时，如果用户是未登录的状态，就给用户返回登录页面。
+
+此时，该登录页面的 URL 后面有参数：next=用户访问的页面的 URL。
+
+因此，设置在用户登录成功后重定向的 URL 为 next 参数的值。
+
+但是，若用户一开始就输入登录页面 logi，request.GET.get("next") 就取不到值，所以在后面加 or，可以设置自定义返回的页面。
+
+```python
+# 如果直接输入 login、get() 就取不到值，path 可以自定义设置返回的页面
+path = request.GET.get("next") or "/index/"
+return redirect(path)
+```
+
+# Django cookie 与 session
+
+Cookie 是存储在客户端计算机上的文本文件，并保留了各种跟踪信息。
+
+识别返回用户包括三个步骤：
+
+- 服务器脚本向浏览器发送一组 Cookie。例如：姓名、年龄或识别号码等。
+- 浏览器将这些信息存储在本地计算机上，以备将来使用。
+- 当下一次浏览器向 Web 服务器发送任何请求时，浏览器会把这些 Cookie 信息发送到服务器，服务器将使用这些信息来识别用户。
+
+HTTP 是一种"无状态"协议，这意味着每次客户端检索网页时，客户端打开一个单独的连接到 Web 服务器，服务器会自动不保留之前客户端请求的任何记录。
+
+但是仍然有以下三种方式来维持 Web 客户端和 Web 服务器之间的 session 会话：
+
+## Cookies
+
+一个 Web 服务器可以分配一个唯一的 session 会话 ID 作为每个 Web 客户端的 cookie，对于客户端的后续请求可以使用接收到的 cookie 来识别。
+
+在Web开发中，使用 session 来完成会话跟踪，session 底层依赖 Cookie 技术。
+
+![img](img/cookie.png)
+
+### Django 中 Cookie 的语法
+
+设置 cookie:
+
+```
+rep.set_cookie(key,value,...) 
+rep.set_signed_cookie(key,value,salt='加密盐',...)
+```
+
+获取 cookie:
+
+```
+request.COOKIES.get(key)
+```
+
+删除 cookie:
+
+```
+rep =HttpResponse || render || redirect 
+rep.delete_cookie(key)
+```
+
+## Session(保存在服务端的键值对)
+
+服务器在运行时可以为每一个用户的浏览器创建一个其独享的 session 对象，由于 session 为用户浏览器独享，所以用户在访问服务器的 web 资源时，可以把各自的数据放在各自的 session 中，当用户再去访问该服务器中的其它 web 资源时，其它 web 资源再从用户各自的 session 中取出数据为用户服务。
+
+![img](img/5-21-1.jpg)
+
+### 工作原理
+
+- a. 浏览器第一次请求获取登录页面 login。
+
+- b. 浏览器输入账号密码第二次请求，若输入正确，服务器响应浏览器一个 index 页面和一个键为 sessionid，值为随机字符串的 cookie，即 set_cookie ("sessionid",随机字符串)。
+
+- c. 服务器内部在 django.session 表中记录一条数据。
+
+  django.session 表中有三个字段。
+
+  - session_key：存的是随机字符串，即响应给浏览器的 cookie 的 sessionid 键对应的值。
+  - session_data：存的是用户的信息，即多个 request.session["key"]=value，且是密文。
+  - expire_date：存的是该条记录的过期时间（默认14天）
+
+- d. 浏览器第三次请求其他资源时，携带 cookie :{sessionid:随机字符串}，服务器从 django.session 表中根据该随机字符串取出该用户的数据，供其使用（即保存状态）。
+
+**注意:** django.session 表中保存的是浏览器的信息，而不是每一个用户的信息。 因此， 同一浏览器多个用户请求只保存一条记录（后面覆盖前面）,多个浏览器请求才保存多条记录。
+
+cookie 弥补了 http 无状态的不足，让服务器知道来的人是"谁"，但是 cookie 以文本的形式保存在浏览器端，安全性较差，且最大只支持 4096 字节，所以只通过 cookie 识别不同的用户，然后，在对应的 session 里保存私密的信息以及超过 4096 字节的文本。
+
+session 设置：
+
+```
+request.session["key"] = value
+```
+
+执行步骤：
+
+- a. 生成随机字符串
+- b. 把随机字符串和设置的键值对保存到 django_session 表的 session_key 和 session_data 里
+- c. 设置 **cookie：set_cookie("sessionid",随机字符串)** 响应给浏览器
+
+session 获取：
+
+```
+request.session.get('key')
+```
+
+执行步骤：
+
+- a. 从 cookie 中获取 sessionid 键的值，即随机字符串。
+- b. 根据随机字符串从 django_session 表过滤出记录。
+- c. 取出 session_data 字段的数据。
+
+session 删除，删除整条记录（包括 session_key、session_data、expire_date 三个字段）：
+
+```
+request.session.flush()
+```
+
+删除 session_data 里的其中一组键值对：
+
+```
+del request.session["key"]
+```
+
+执行步骤：
+
+- a. 从 cookie 中获取 sessionid 键的值，即随机字符串
+- b. 根据随机字符串从 django_session 表过滤出记录
+- c. 删除过滤出来的记录
+
+```python
+from session import views as session_views
+urlpatterns = [
+    path('session_login/', session_views.login),
+    path('s_index/', session_views.s_index),
+    path('s_logout/', session_views.s_logout),
+]
+```
+
+# Django 中间件
+
+Django 中间件是修改 Django request 或者 response 对象的钩子，可以理解为是介于 HttpRequest 与 HttpResponse 处理之间的一道处理过程。
+
+浏览器从请求到响应的过程中，Django 需要通过很多中间件来处理，可以看如下图所示：
+
+![img](img/1_t9TAX89Y3rZUXth2Le07Xg.png)
+
+Django 中间件作用：
+
+- 修改请求，即传送到 view 中的 HttpRequest 对象。
+- 修改响应，即 view 返回的 HttpResponse 对象。
+
+中间件组件配置在 settings.py 文件的 MIDDLEWARE 选项列表中。
+
+Django 默认的中间件配置：
+
+```python
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+```
+
+### 自定义中间件
+
+中间件可以定义四个方法，分别是：
+
+process_request(self,request)
+process_view(self, request, view_func, view_args, view_kwargs)
+process_exception(self, request, exception)
+process_response(self, request, response)
+
+自定义中间的步骤：
+
+在 app 目录下新建一个 py 文件，名字自定义，并在该 py 文件中导入 MiddlewareMixin：
+
+```
+from django.utils.deprecation import MiddlewareMixin
+```
+
+自定义的中间件类，要继承父类 MiddlewareMixin:
+
+```
+class MD1(MiddlewareMixin): 
+    pass
+```
+
+```pyth
+MIDDLEWARE = [
+  'django.middleware.security.SecurityMiddleware',
+  'django.contrib.sessions.middleware.SessionMiddleware',
+  'django.middleware.common.CommonMiddleware',
+  'django.middleware.csrf.CsrfViewMiddleware',
+  'django.contrib.auth.middleware.AuthenticationMiddleware',
+  'django.contrib.messages.middleware.MessageMiddleware',
+  'django.middleware.clickjacking.XFrameOptionsMiddleware',
+  'app01.middlewares.MD1',
+]
+```
+
+## 自定义中间件类的方法
+
+自定义中间件类的方法有：process_request 和 process_response。
+
+![img](img/Django-md_5.png)
+
+### process_request 方法
+
+process_request 方法有一个参数 request，这个 request 和视图函数中的 request 是一样的。
+
+process_request 方法的返回值可以是 None 也可以是 HttpResponse 对象。
+
+- 返回值是 None 的话，按正常流程继续走，交给下一个中间件处理。
+- 返回值是 HttpResponse 对象，Django 将不执行后续视图函数之前执行的方法以及视图函数，直接以该中间件为起点，倒序执行中间件，且执行的是视图函数之后执行的方法。
+
+process_request 方法是在视图函数之前执行的。
+
+当配置多个中间件时，会按照 MIDDLEWARE中 的注册顺序，也就是列表的索引值，顺序执行。
+
+不同中间件之间传递的 request 参数都是同一个请求对象。
+
+```python
+from django.utils.deprecation import MiddlewareMixin
+from django.shortcuts import render, HttpResponse
+class MD1(MiddlewareMixin):
+    def process_request(self, request):
+       print("md1  process_request 方法。", id(request)) #在视图之前执行
+```
+
+### process_response
+
+process_response 方法有两个参数，一个是 request，一个是 response，request 是请求对象，response 是视图函数返回的 HttpResponse 对象，该方法必须要有返回值，且必须是response。
+
+process_response 方法是在视图函数之后执行的。
+
+当配置多个中间件时，会按照 MIDDLEWARE 中的注册顺序，也就是列表的索引值，倒序执行
+
+```python
+class MD1(MiddlewareMixin):
+    def process_request(self, request):
+        print("md1  process_request 方法。", id(request)) #在视图之前执行
+    def process_response(self,request, response): :#基于请求响应
+        print("md1  process_response 方法！", id(request)) #在视图之后
+        return response
+```
+
+从下图看，正常的情况下按照绿色的路线进行执行,假设**中间件1**有返回值，则按照红色的路线走，直接执行该类下的 process_response 方法返回，后面的其他中间件就不会执行。
+
+![img](img/md-sssss-1.png)
+
+### process_view
+
+process_view 方法格式如下：
+
+```
+process_view(request, view_func, view_args, view_kwargs)
+```
+
+- request 是 HttpRequest 对象。
+- view_func 是 Django 即将使用的视图函数。
+- view_args 是将传递给视图的位置参数的列表。
+- view_kwargs 是将传递给视图的关键字参数的字典。
+
+view_args 和 view_kwargs 都不包含第一个视图参数（request）。
+
+process_view 方法是在视图函数之前，process_request 方法之后执行的。
+
+返回值可以是 None、view_func(request) 或 HttpResponse 对象。
+
+- 返回值是 None 的话，按正常流程继续走，交给下一个中间件处理。
+- 返回值是 HttpResponse 对象，Django 将不执行后续视图函数之前执行的方法以及视图函数，直接以该中间件为起点，倒序执行中间件，且执行的是视图函数之后执行的方法。
+- c.返回值是 view_func(request)，Django 将不执行后续视图函数之前执行的方法，提前执行视图函数，然后再倒序执行视图函数之后执行的方法。
+- 当最后一个中间件的 process_request 到达路由关系映射之后，返回到第一个中间件 process_view，然后依次往下，到达视图函数。
+
+```python
+class MD1(MiddlewareMixin):
+    def process_request(self, request):
+        print("md1  process_request 方法。", id(request)) #在视图之前执行
+
+    def process_response(self,request, response): :#基于请求响应
+        print("md1  process_response 方法！", id(request)) #在视图之后
+        return response
+
+    def process_view(self,request, view_func, view_args, view_kwargs):
+        print("md1  process_view 方法！") #在视图之前执行 顺序执行
+        #return view_func(request)
+```
+
+![img](img/md-32rdf-16471620990887.png)
+
+### process_exception
+
+process_exception 方法如下：
+
+```
+process_exception(request, exception)
+```
+
+参数说明：
+
+- request 是 HttpRequest 对象。
+- exception 是视图函数异常产生的 Exception 对象。
+
+process_exception 方法只有在视图函数中出现异常了才执行，按照 settings 的注册倒序执行。
+
+在视图函数之后，在 process_response 方法之前执行。
+
+process_exception 方法的返回值可以是一个 None 也可以是一个 HttpResponse 对象。
+
+返回值是 None，页面会报 500 状态码错误，视图函数不会执行。
+
+process_exception 方法倒序执行，然后再倒序执行 process_response 方法。
+
+返回值是 HttpResponse 对象，页面不会报错，返回状态码为 200。
+
+视图函数不执行，该中间件后续的 process_exception 方法也不执行，直接从最后一个中间件的 process_response 方法倒序开始执行。
+
+若是 process_view 方法返回视图函数，提前执行了视图函数，且视图函数报错，则无论 process_exception 方法的返回值是什么，页面都会报错， 且视图函数和 process_exception 方法都不执行。
+
+直接从最后一个中间件的 process_response 方法开始倒序执行：
+
+```python
+class MD1(MiddlewareMixin):
+    def process_request(self, request):
+        print("md1  process_request 方法。", id(request)) #在视图之前执行
+    def process_response(self,request, response): :#基于请求响应
+        print("md1  process_response 方法！", id(request)) #在视图之后
+        return response
+    def process_view(self,request, view_func, view_args, view_kwargs):
+        print("md1  process_view 方法！") #在视图之前执行 顺序执行
+        #return view_func(request)
+    def process_exception(self, request, exception):#引发错误 才会触发这个方法
+        print("md1  process_exception 方法！")
+        # return HttpResponse(exception) #返回错误信息
+```
+
+# Django 视图 - FBV 与 CBV
+
+**FBV（function base views）** 基于函数的视图，就是在视图里使用函数处理请求。
+
+**CBV（class base views）** 基于类的视图，就是在视图里使用类处理请求。
+
+### FBV
+
+基于函数的视图其实我们前面章节一直在使用，就是使用了函数来处理用户的请求，查看以下实例：
+
+```python
+#urls.py
+urlpatterns = [
+    path("login/", views.login),
+]
+#view.py
+from django.shortcuts import render,HttpResponse
+
+def login(request):
+    if request.method == "GET":
+        return HttpResponse("GET 方法")
+    if request.method == "POST":
+        user = request.POST.get("user")
+        pwd = request.POST.get("pwd")
+        if user == "runoob" and pwd == "123456":
+            return HttpResponse("POST 方法")
+        else:
+            return HttpResponse("POST 方法1")
+```
+
+### CBV
+
+基于类的视图，就是使用了类来处理用户的请求，不同的请求我们可以在类中使用不同方法来处理，这样大大的提高了代码的可读性。
+
+定义的类要继承父类 View，所以需要先引入库：
+
+```
+from django.views import View
+```
+
+执行对应请求的方法前会优先执行 dispatch 方法(在get/post/put...方法前执行)，dispatch() 方法会根据请求的不同调用相应的方法来处理。
+
+其实，在我们前面学到的知识都知道 Django 的 url 是将一个请求分配给可调用的函数的，而不是一个类，那是如何实现基于类的视图的呢？ 主要还是通过父类 View 提供的一个静态方法 as_view() ，as_view 方法是基于类的外部接口， 他返回一个视图函数，调用后请求会传递给 dispatch 方法，dispatch 方法再根据不同请求来处理不同的方法。
+
+```python
+#urls.py
+urlpatterns = [
+    path("login/", views.Login.as_view()),
+]
+#view.py
+from django.shortcuts import render,HttpResponse
+from django.views import View
+
+class Login(View):
+    def get(self,request):
+        return HttpResponse("GET 方法")
+
+    def post(self,request):
+        user = request.POST.get("user")
+        pwd = request.POST.get("pwd")
+        if user == "runoob" and pwd == "123456":
+            return HttpResponse("POST 方法")
+        else:
+            return HttpResponse("POST 方法 1")
+```
+
+# 部署
+
+## uwsgi 配置
+
+uwsgi支持ini、xml等多种配置方式，本文以 ini 为例， 在/etc/目录下新建uwsgi9090.ini，添加如下配置：
+
+```
+[uwsgi]
+socket = 127.0.0.1:9090
+master = true         //主进程
+vhost = true          //多站模式
+no-site = true        //多站模式时不设置入口模块和文件
+workers = 2           //子进程数
+reload-mercy = 10     
+vacuum = true         //退出、重启时清理文件
+max-requests = 1000   
+limit-as = 512
+buffer-size = 30000
+pidfile = /var/run/uwsgi9090.pid    //pid文件，用于下面的脚本启动、停止该进程
+daemonize = /website/uwsgi9090.log
+```
+
+## Nginx 配置
+
+找到nginx的安装目录（如：/usr/local/nginx/），打开conf/nginx.conf文件，修改server配置：
+
+```
+server {
+        listen       80;
+        server_name  localhost;
+        
+        location / {            
+            include  uwsgi_params;
+            uwsgi_pass  127.0.0.1:9090;              //必须和uwsgi中的设置一致
+            uwsgi_param UWSGI_SCRIPT demosite.wsgi;  //入口文件，即wsgi.py相对于项目根目录的位置，“.”相当于一层目录
+            uwsgi_param UWSGI_CHDIR /demosite;       //项目根目录
+            index  index.html index.htm;
+            client_max_body_size 35m;
+        }
+    }
+```
+
+[install Nginx](https://www.runoob.com/linux/nginx-install-setup.html)
+
