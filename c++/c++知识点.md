@@ -792,3 +792,135 @@ C++ 标准库包含了所有的 C 标准库，为了支持类型安全，做了�
 - 本地化库
 - 异常处理类
 - 杂项支持库
+
+# 多线程
+
+- 基于进程的多任务处理是程序的并发执行。
+- 基于线程的多任务处理是同一程序的片段的并发执行
+
+```c++
+#include<pthread.h>
+//创建POSIX线程
+pthread_create(thread, att ,start_routin,arg)
+//终止线程
+pthread_exit(status)
+```
+
+thread 指向线程标识符指针。
+attr	一个不透明的属性对象，可以被用来设置线程属性。您可以指定线程属性对象，也可以使用默认值 NULL。
+start_routine	线程运行函数起始地址，一旦线程被创建就会执行。
+arg	运行函数的参数。它必须通过把引用作为指针强制转换为 void 类型进行传递。如果没有传递参数，则使用 NULL。
+
+**pthread_exit** 用于显式地退出一个线程。通常情况下，pthread_exit() 函数是在线程完成工作后无需继续存在时被调用。
+
+如果 main() 是在它所创建的线程之前结束，并通过 pthread_exit() 退出，那么其他线程将继续执行。否则，它们将在 main() 结束时自动被终止。
+
+向线程传递参数
+
+```c++
+rc = pthread_create(&threads[i], NULL,
+                          PrintHello, (void *)&td[i]);
+// 对传入的参数进行强制类型转换，由无类型指针变为整形数指针，然后再读取
+// 传入的时候必须强制转换为void* 类型，即无类型指针 
+```
+
+## 连接和分离线程
+
+```c++
+pthread_join (threadid, status) 
+pthread_detach (threadid) 
+    pthread_attr_t attr;
+    // 初始化并设置线程为可连接的（joinable）
+   pthread_attr_init(&attr);
+   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+// 删除属性，并等待其他线程
+   pthread_attr_destroy(&attr);
+```
+
+pthread_join() 子程序阻碍调用程序，直到指定的 threadid 线程终止为止。当创建一个线程时，它的某个属性会定义它是否是可连接的（joinable）或可分离的（detached）。只有创建时定义为可连接的线程才可以被连接。如果线程创建时被定义为可分离的，则它永远也不能被连接。
+
+c++11之后新的线程标准库std::thread
+
+std::thread thread_object(callable)
+
+可调用对象可以是函数指针，函数对象，lambda表达式，定义callable后，将其传递给std::thread 的构造函数
+
+```c++
+// 演示多线程的CPP程序
+// 使用三个不同的可调用对象
+#include <iostream>
+#include <thread>
+using namespace std;
+// 一个虚拟函数
+void foo(int Z)
+{
+    for (int i = 0; i < Z; i++) {
+        cout << "线程使用函数指针作为可调用参数\n";
+    }
+}
+// 可调用对象
+class thread_obj {
+public:
+    void operator()(int x)
+    {
+        for (int i = 0; i < x; i++)
+            cout << "线程使用函数对象作为可调用参数\n";
+    }
+};
+int main()
+{
+    cout << "线程 1 、2 、3 "
+         "独立运行" << endl;
+    // 函数指针
+    thread th1(foo, 3);
+    // 函数对象
+    thread th2(thread_obj(), 3);
+    // 定义 Lambda 表达式
+    auto f = [](int x) {
+        for (int i = 0; i < x; i++)
+            cout << "线程使用 lambda 表达式作为可调用参数\n";
+    };
+    // 线程通过使用 lambda 表达式作为可调用的参数
+    thread th3(f, 3);
+    // 等待线程完成
+    // 等待线程 t1 完成
+    th1.join();
+    // 等待线程 t2 完成
+    th2.join();
+    // 等待线程 t3 完成
+    th3.join();
+    return 0;
+}
+g++ -std=c++11 test.cpp  使用参数来进行编译
+```
+
+# c++ 11新语法
+
+自动类型推导auto
+
+```c++
+auto i = 0;
+auto c = 'c';
+auto s = "hello"
+
+for(auto its = v.begin();its!=v.end();its++)
+{
+    cout<<*its<<endl;
+}
+
+```
+
+lambda表达式
+
+Range-based for-loop
+
+支持数组和迭代器的遍历
+
+```c++
+int p[8]={2,3,4,56,6,7,7,7};
+    for(auto &x : p)
+    {
+        cout<<x;
+    }
+```
+

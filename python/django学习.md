@@ -512,7 +512,7 @@ auto_now  自动创建---无论添加或修改，都是当前操作的时间
 
 auto_now_add  自动创建---永远是创建时的时间
 
-5、choices
+5、choices 设定字段的选项，各元组中的第一个值是设置在模型上的值，第二值是人类可读的值
 
 ```python
 GENDER_CHOICE = (
@@ -607,6 +607,106 @@ def datadel(request):
     # Test.objects.all().delete()
     return HttpResponse("<p>删除成功</p>")
 ```
+
+使用的函数
+
+save()保存到数据库
+
+delete()删除数据
+
+```python
+subject = Subject.objects.get(no=2)
+subject.delete()
+```
+
+更新数据
+
+```
+subject = Subject.objects.get(no=1)
+subject.name = 'Python全栈+人工智能'
+subject.save()
+```
+
+查询数据
+
+1. 查询所有对象。
+
+```
+Subjects.objects.all()
+```
+
+1. 过滤数据。
+
+```
+# 查询名称为“Python全栈+人工智能”的学科
+Subject.objects.filter(name='Python全栈+人工智能')
+
+# 查询名称包含“全栈”的学科（模糊查询）
+Subject.objects.filter(name__contains='全栈')
+Subject.objects.filter(name__startswith='全栈')
+Subject.objects.filter(name__endswith='全栈')
+
+# 查询所有热门学科
+Subject.objects.filter(is_hot=True)
+
+# 查询编号大于3小于10的学科
+Subject.objects.filter(no__gt=3).filter(no__lt=10)
+Subject.objects.filter(no__gt=3, no__lt=10)
+
+# 查询编号在3到7之间的学科
+Subject.objects.filter(no__ge=3, no__le=7)
+Subject.objects.filter(no__range=(3, 7))
+```
+
+1. 查询单个对象。
+
+```
+# 查询主键为1的学科
+Subject.objects.get(pk=1)
+Subject.objects.get(no=1)
+Subject.objects.filter(no=1).first()
+Subject.objects.filter(no=1).last()
+```
+
+1. 排序。
+
+```
+# 查询所有学科按编号升序排列
+Subject.objects.order_by('no')
+# 查询所有部门按部门编号降序排列
+Subject.objects.order_by('-no')
+```
+
+1. 切片（分页查询）。
+
+```
+# 按编号从小到大查询前3个学科
+Subject.objects.order_by('no')[:3]
+```
+
+1. 计数。
+
+```
+# 查询一共有多少个学科
+Subject.objects.count()
+```
+
+1. 高级查询。
+
+```
+# 查询编号为1的学科的老师
+Teacher.objects.filter(subject__no=1)
+Subject.objects.get(pk=1).teacher_set.all() 
+
+# 查询学科名称有“全栈”二字的学科的老师
+Teacher.objects.filter(subject__name__contains='全栈') 
+```
+
+> **说明1**：由于老师与学科之间存在多对一外键关联，所以能通过学科反向查询到该学科的老师（从一对多关系中“一”的一方查询“多”的一方），反向查询属性默认的名字是`类名小写_set`（如上面例子中的`teacher_set`），当然也可以在创建模型时通过`ForeingKey`的`related_name`属性指定反向查询属性的名字。如果不希望执行反向查询可以将`related_name`属性设置为`'+'`或者以`'+'`开头的字符串。
+
+> **说明2**：ORM查询多个对象时会返回QuerySet对象，QuerySet使用了惰性查询，即在创建QuerySet对象的过程中不涉及任何数据库活动，等真正用到对象时（对QuerySet求值）才向数据库发送SQL语句并获取对应的结果，这一点在实际开发中需要引起注意！
+
+> **说明3**：如果希望更新多条数据，不用先逐一获取模型对象再修改对象属性，可以直接使用QuerySet对象的`update()`方法一次性更新多条数据。
 
 ## 数据好后的流程
 
@@ -2085,6 +2185,8 @@ request.session.get('key')
 
 session 删除，删除整条记录（包括 session_key、session_data、expire_date 三个字段）：
 
+删除当前的会话数据并删除会话的cookie，django.contrib.auth.logout() 函数中就会调用它。
+
 ```
 request.session.flush()
 ```
@@ -2422,3 +2524,6 @@ server {
 
 [install Nginx](https://www.runoob.com/linux/nginx-install-setup.html)
 
+# Ajax概述
+
+对于传统的Web应用，每次页面上需要加载新的内容都需要重新请求服务器并刷新整个页面，如果服务器短时间内无法给予响应或者网络状况并不理想，那么可能会造成浏览器长时间的空白并使得用户处于等待状态，在这个期间用户什么都做不了，如下图所示。很显然，这样的Web应用并不能带来很好的用户体验。
