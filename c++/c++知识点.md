@@ -6,7 +6,54 @@ stoi()字符串变换为数字
 
 ## find()函数
 
+memset()函数
 
+fill(first,last,val)填充函数
+
+返回最大值
+
+*max_element(first,size)
+
+
+
+## sort函数
+
+二维的排序
+
+第一层按照升序，第二层按照降序
+
+```c++
+bool cmp(vector<int>&a,vector<int>&b){
+    if(a[0]!=b[0]) return a[0]<b[0];
+    else return a[1]>b[1];
+ }
+
+vector<vector<int> >a(6);
+    int x;
+    for(int i=0;i<6;i++){
+        for(int j=0;j<2;j++){
+            cin>>x;
+            a[i].push_back(x);
+        }
+    }
+    cout<<endl;
+    sort(a.begin(),a.end(),cmp);
+    for(int i=0;i<6;i++){
+        for(int j=0;j<2;j++){
+            cout<<a[i][j]<<" ";
+        }
+```
+
+## C++ lower_bound()函数
+
+```c++
+ForwardIterator lower_bound (ForwardIterator first, ForwardIterator last,
+                             const T& val);
+```
+
+函数用于在指定区域内查找不小于目标值的第一个元素。也就是说，使用该函数在指定范围内查找某个目标值时，最终查找到的不一定是和目标值相等的元素，还可能是比目标值大的元素。
+
+[first, last) 用于指定函数的作用范围；val 用于指定目标元素；comp 用于自定义比较规则
 
 # GUN的c/c++b编译器
 
