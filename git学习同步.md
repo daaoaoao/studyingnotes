@@ -43,3 +43,25 @@ git push -u origin master   （注：此操作目的是把本地仓库push到git
 ```
 
  [完整参考教程](https://cloud.tencent.com/developer/article/1504684)
+
+```git
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+	logallrefupdates = true
+	ignorecase = true
+[remote "origin"]
+	url = https://github.91chi.fun/https://github.com/smartdoublej/smartdoublej.github.io.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[user]
+    name = smartdoublej
+    email = 1535086745@QQ.COM
+[credential]
+    helper = store
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
+
+```
+
