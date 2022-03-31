@@ -16,7 +16,7 @@ STL中算法大致分为四类：
 - 非可变序列算法：指不直接修改其所操作的容器内容的算法。
 - 可变序列算法：指可以修改它们所操作的容器内容的算法。
 - 排序算法：对序列进行排序和合并的算法、搜索算法以及有序序列上的集合操作。
-- 数值算法：对容器内容进行数值计算。
+- 数值算法：对容器内容进行<font background-cokor="blue">数值</font>计算。
 
 # 仿函数
 
@@ -610,7 +610,266 @@ deque内部有一个指针指向map，map是一小块连续空间，其中的每
 
 deque迭代器的“++”、“--”操作是远比vector迭代器繁琐，其主要工作在于缓冲区边界，如何从当前缓冲区跳到另一个缓冲区，当然deque内部在插入元素时，如果map中node数量全部使用完，且node指向的缓冲区也没有多余的空间，这时会配置新的map（2倍于当前+2的数量）来容纳更多的node，也就是可以指向更多的缓冲区。在deque删除元素时，也提供了元素的析构和空闲缓冲区空间的释放等机制。
 
-# map,set的实现，红黑树如何同时实现这两种？为什么使用红黑树
+## stack和queue的实现
+
+**stack**
+
+stack（栈）是一种先进后出（First In Last Out）的数据结构，只有一个入口和出口，那就是栈顶，除了获取栈顶元素外，没有其他方法可以获取到内部的其他元素，其结构图如下：
+
+![img](../img/1565957994483-16482733342562.png)
+
+stack这种单向开口的数据结构很容易由**双向开口的deque和list**形成，只需要根据stack的性质对应移除某些接口即可实现
+
+```c++
+template <class T, class Sequence = deque<T> >
+class stack
+{
+    ...
+protected:
+    Sequence c;
+public:
+    bool empty(){return c.empty();}
+    size_type size() const{return c.size();}
+    reference top() const {return c.back();}
+    const_reference top() const{return c.back();}
+    void push(const value_type& x){c.push_back(x);}
+    void pop(){c.pop_back();}
+};
+
+```
+
+从stack的数据结构可以看出，其所有操作都是围绕Sequence完成，而Sequence默认是deque数据结构。stack这种“修改某种接口，形成另一种风貌”的行为，成为adapter(配接器)。常将其归类为container adapter而非container
+
+stack除了默认使用deque作为其底层容器之外，也可以使用双向开口的list，只需要在初始化stack时，将list作为第二个参数即可。由于stack只能操作顶端的元素，因此其内部元素无法被访问，也不提供迭代器。
+
+**queue**
+
+queue（队列）是一种先进先出（First In First Out）的数据结构，只有一个入口和一个出口，分别位于最底端和最顶端，出口元素外，没有其他方法可以获取到内部的其他元素，其结构图如下：
+
+![img](../img/1565958318457.png)
+
+类似的，queue这种“先进先出”的数据结构很容易由双向开口的deque和list形成，只需要根据queue的性质对应移除某些接口即可实现，queue的源码如下：
+
+```c++
+template <class T, class Sequence = deque<T> >
+class queue
+{
+    ...
+protected:
+    Sequence c;
+public:
+    bool empty(){return c.empty();}
+    size_type size() const{return c.size();}
+    reference front() const {return c.front();}
+    const_reference front() const{return c.front();}
+    void push(const value_type& x){c.push_back(x);}
+    void pop(){c.pop_front();}
+};
+
+```
+
+从queue的数据结构可以看出，其所有操作都也都是是围绕Sequence完成，Sequence默认也是deque数据结构。queue也是一类container adapter。
+
+同样，queue也可以使用list作为底层容器，不具有遍历功能，没有迭代器。
+
+## heap的实现
+
+heap（堆）并不是STL的容器组件，是priority queue（优先队列）的底层实现机制，因为binary max heap（大根堆）总是最大值位于堆的根部，优先级最高。
+
+binary heap本质是一种complete binary tree（完全二叉树），整棵binary tree除了最底层的叶节点之外，都是填满的，但是叶节点从左到右不会出现空隙，如下图所示就是一颗完全二叉树
+
+![img](../img/1566039990260.png)
+
+完全二叉树内没有任何节点漏洞，是非常紧凑的，这样的一个好处是可以使用array来存储所有的节点，因为当其中某个节点位于$i$处，其左节点必定位于$2i$处，右节点位于$2i+1$处，父节点位于$i/2$（向下取整）处。这种以array表示tree的方式称为隐式表述法。
+
+因此我们可以使用一个array和一组heap算法来实现max heap（每个节点的值大于等于其子节点的值）和min heap（每个节点的值小于等于其子节点的值）。由于array不能动态的改变空间大小，用vector代替array是一个不错的选择。
+
+那heap算法有哪些？常见有的插入、弹出、排序和构造算法，下面一一进行描述。
+
+**push_heap插入算法**
+
+由于完全二叉树的性质，新插入的元素一定是位于树的最底层作为叶子节点，并填补由左至右的第一个空格。事实上，在刚执行插入操作时，新元素位于底层vector的end()处，之后是一个称为percolate up（上溯）的过程，举个例子如下图：
+
+![img](../img/1566040870063.png)
+
+新元素50在插入堆中后，先放在vector的end()存着，之后执行上溯过程，调整其根结点的位置，以便满足max heap的性质，如果了解大根堆的话，这个原理跟大根堆的调整过程是一样的。
+
+**pop_heap算法**
+
+heap的pop操作实际弹出的是根节点吗，但在heap内部执行pop_heap时，只是将其移动到vector的最后位置，然后再为这个被挤走的元素找到一个合适的安放位置，使整颗树满足完全二叉树的条件。这个被挤掉的元素首先会与根结点的两个子节点比较，并与较大的子节点更换位置，如此一直往下，直到这个被挤掉的元素大于左右两个子节点，或者下放到叶节点为止，这个过程称为percolate down（下溯）。举个例子：
+
+![img](../img/1566041421056.png)
+
+根节点68被pop之后，移到了vector的最底部，将24挤出，24被迫从根节点开始与其子节点进行比较，直到找到合适的位置安身，需要注意的是pop之后元素并没有被移走，如果要将其移走，可以使用pop_back()。
+
+**sort算法**
+
+一言以蔽之，因为pop_heap可以将当前heap中的最大值置于底层容器vector的末尾，heap范围减1，那么不断的执行pop_heap直到树为空，即可得到一个递增序列。
+
+**make_heap算法**
+
+将一段数据转化为heap，一个一个数据插入，调用上面说的两种percolate算法即可。
+
+代码实测：
+
+```c++
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+int main()
+{
+    vector<int> v = { 0,1,2,3,4,5,6 };
+    make_heap(v.begin(), v.end()); //以vector为底层容器
+    for (auto i : v)
+    {
+        cout << i << " "; // 6 4 5 3 1 0 2
+    }
+    cout << endl;
+    v.push_back(7);
+    push_heap(v.begin(), v.end());
+    for (auto i : v)
+    {
+        cout << i << " "; // 7 6 5 4 1 0 2 3
+    }
+    cout << endl;
+    pop_heap(v.begin(), v.end());
+    cout << v.back() << endl; // 7 
+    v.pop_back();
+    for (auto i : v)
+    {
+        cout << i << " "; // 6 4 5 3 1 0 2
+    }
+    cout << endl;
+    sort_heap(v.begin(), v.end());
+    for (auto i : v)
+    {
+        cout << i << " "; // 0 1 2 3 4 5 6
+    }
+    return 0;
+}
+```
+
+## priority_queue实现
+
+priority_queue，优先队列，是一个拥有权值观念的queue，它跟queue一样是顶部入口，底部出口，在插入元素时，元素并非按照插入次序排列，它会自动根据权值（通常是元素的实值）排列，权值最高，排在最前面，如下图所示。
+
+![img](../img/1566126001158-164827433733811.png)
+
+默认情况下，priority_queue使用一个max-heap完成，底层容器使用的是一般为vector为底层容器，堆heap为处理规则来管理底层容器实现 。priority_queue的这种实现机制导致其不被归为容器，而是一种容器配接器。关键的源码如下：
+
+```c++
+template <class T, class Squence = vector<T>, 
+class Compare = less<typename Sequence::value_tyoe> >
+class priority_queue{
+    ...
+protected:
+    Sequence c; // 底层容器
+    Compare comp; // 元素大小比较标准
+public:
+    bool empty() const {return c.empty();}
+    size_type size() const {return c.size();}
+    const_reference top() const {return c.front()}
+    void push(const value_type& x)
+    {
+        c.push_heap(x);
+        push_heap(c.begin(), c.end(),comp);
+    }
+    void pop()
+    {
+        pop_heap(c.begin(), c.end(),comp);
+        c.pop_back();
+    }
+};
+
+```
+
+priority_queue的所有元素，进出都有一定的规则，只有queue顶端的元素（权值最高者），才有机会被外界取用，它没有遍历功能，也不提供迭代器
+
+举个例子：
+
+```c++
+#include <queue>
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    int ia[9] = {0,4,1,2,3,6,5,8,7 };
+    priority_queue<int> pq(ia, ia + 9);
+    cout << pq.size() <<endl;  // 9
+    for(int i = 0; i < pq.size(); i++)
+    {
+        cout << pq.top() << " "; // 8 8 8 8 8 8 8 8 8
+    }
+    cout << endl;
+    while (!pq.empty())
+    {
+        cout << pq.top() << ' ';// 8 7 6 5 4 3 2 1 0
+        pq.pop();
+    }
+    return 0;
+}
+```
+
+## set的实现
+
+STL中的容器可分为序列式容器（sequence）和关联式容器（associative），set属于关联式容器。
+
+set的特性是，所有元素都会根据元素的值自动被排序（默认升序），set元素的键值就是实值，实值就是键值，set不允许有两个相同的键值
+
+set不允许迭代器修改元素的值，其迭代器是一种constance iterators
+
+```c++
+#include <set>
+#include <iostream>
+using namespace std;
+
+
+int main()
+{
+    int i;
+    int ia[5] = { 1,2,3,4,5 };
+    set<int> s(ia, ia + 5);
+    cout << s.size() << endl; // 5
+    cout << s.count(3) << endl; // 1
+    cout << s.count(10) << endl; // 0
+
+    s.insert(3); //再插入一个3
+    cout << s.size() << endl; // 5
+    cout << s.count(3) << endl; // 1
+
+    s.erase(1);
+    cout << s.size() << endl; // 4
+
+    set<int>::iterator b = s.begin();
+    set<int>::iterator e = s.end();
+    for (; b != e; ++b)
+        cout << *b << " "; // 2 3 4 5
+    cout << endl;
+
+    b = find(s.begin(), s.end(), 5);
+    if (b != s.end())
+        cout << "5 found" << endl; // 5 found
+
+    b = s.find(2);
+    if (b != s.end())
+        cout << "2 found" << endl; // 2 found
+
+    b = s.find(1);
+    if (b == s.end())
+        cout << "1 not found" << endl; // 1 not found
+    return 0;
+}
+
+```
+
+
+
+关联式容器尽量使用其自身提供的find()函数查找指定的元素，效率更高，因为STL提供的find()函数是一种顺序搜索算法。
+
+## map,set的实现，红黑树如何同时实现这两种？为什么使用红黑树
 
 首先了解二叉查找树
 
@@ -621,7 +880,7 @@ deque迭代器的“++”、“--”操作是远比vector迭代器繁琐，其�
 
 红黑树本质是一颗二叉查找树
 
-## 红黑树的特性
+### 红黑树的特性
 
 1. 每个结点或是红色或是黑色；
 2. 根结点是黑色；
@@ -647,7 +906,7 @@ RBT的删除操作代价要比AVL要好的多，删除一个结点最多只需�
 
 如果查找、插入、删除频率差不多，那么选择红黑树。
 
-## map的基本操作
+### map的基本操作
 
 1.`map<int ,string> a; map<string,int> b;`支持多种类型
 
@@ -671,7 +930,7 @@ mp[1]="name";
 
 6.sort函数，因为map中key按照升序进行排列的，所以不能使用sort函数。
 
-## set的基本操作
+### set的基本操作
 
 Set是关联容器，set中每个元素都只包含一个关键字，set支持高效的关键字查询操作—检查每一个给定的关键字是否在set中，set是以红黑树的平衡二叉检索树结构实现的，支持高效插入删除，插如元素的时候会自动调整二叉树的结构，使得每个子树根节点键值大于左子树所有节点的键值，小于右子树所有节点的键值，另外还得保证左子树和右子树的高度相等。
 
@@ -700,3 +959,33 @@ it=s.find(5); if(it==s.end()) cout<<"not find"<<endl;else cout<<*it<<endl;
 \2) 在这里我们定义了一个模版参数，如果它是key那么它就是set，如果它是map，那么它就是map；底层是红黑树，实现map的红黑树的节点数据类型是key+value，而实现set的节点数据类型是value
 
 \3) 因为map和set要求是自动排序的，红黑树能够实现这一功能，而且时间复杂度比较低。
+
+## unordered_map和map的区别和应用场景
+
+map支持键值的自动排序，底层机制是红黑树，红黑树的查询和维护时间复杂度均为$O(logn)$，但是空间占用比较大，因为每个节点要保持父节点、孩子节点及颜色的信息
+
+unordered_map是C++ 11新添加的容器，底层机制是哈希表，通过hash函数计算元素位置，其查询时间复杂度为O(1)，维护时间与bucket桶所维护的list长度有关，但是建立hash表耗时较大
+
+从两者的底层机制和特点可以看出：map适用于有序数据的应用场景，unordered_map适用于高效查询的应用场景
+
+# hashtable中解决冲突的方法
+
+线性探测
+
+使用hash函数计算出的位置如果已经有元素占用了，则向后依次寻找，找到表尾则回到表头，直到找到一个空位
+
+开链
+
+每个表格维护一个list，如果hash函数计算出的格子相同，则按顺序存在这个list中
+
+再散列
+
+发生冲突时使用另一种hash函数再计算一个地址，直到不冲突
+
+二次探测
+
+使用hash函数计算出的位置如果已经有元素占用了，按照$1^2$、$2^2$、$3^2$...的步长依次寻找，如果步长是随机数序列，则称之为伪随机探测
+
+公共溢出区
+
+一旦hash函数计算的结果相同，就放入公共溢出区

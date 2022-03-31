@@ -55,6 +55,35 @@ ForwardIterator lower_bound (ForwardIterator first, ForwardIterator last,
 
 [first, last) 用于指定函数的作用范围；val 用于指定目标元素；comp 用于自定义比较规则
 
+# c++引用
+
+引用在定义时需要添加`&`，在使用时不能添加`&`，使用时添加`&`表示取地址。
+
+### C++引用作为函数参数
+
+\1) swap1() 直接传递参数的内容，不能达到交换两个数的值的目的。对于 swap1() 来说，a、b 是形参，是作用范围仅限于函数内部的局部变量，它们有自己独立的内存，和 num1、num2 指代的数据不一样。调用函数时分别将 num1、num2 的值传递给 a、b，此后 num1、num2 和 a、b 再无任何关系，在 swap1() 内部修改 a、b 的值不会影响函数外部的 num1、num2，更不会改变 num1、num2 的值。
+
+\2) swap2() 传递的是指针，能够达到交换两个数的值的目的。调用函数时，分别将 num1、num2 的指针传递给 p1、p2，此后 p1、p2 指向 a、b 所代表的数据，在函数内部可以通过指针间接地修改 a、b 的值。我们在《[C语言指针变量作为函数参数](https://xinbaoku.com/archive/3AFKCAcA.html)》中也对比过第 1)、2) 中方式的区别。
+
+\2) swap3() 是按引用传递，能够达到交换两个数的值的目的。调用函数时，分别将 r1、r2 绑定到 num1、num2 所指代的数据，此后 r1 和 num1、r2 和 num2 就都代表同一份数据了，通过 r1 修改数据后会影响 num1，通过 r2 修改数据后也会影响 num2。
+
+从以上代码的编写中可以发现，按引用传参在使用形式上比指针更加直观。在以后的 C++ 编程中，我鼓励读者大量使用引用，它一般可以代替指针（当然指针在C++中也不可或缺），C++ 标准库也是这样做的。
+
+### C++引用作为函数返回值
+
+```c++
+int &plus10(int &r) {
+    r += 10;
+    return r;
+}
+int main() {
+    int num1 = 10;
+    int num2 = plus10(num1);
+    cout << num1 << " " << num2 << endl;
+```
+
+
+
 # GUN的c/c++b编译器
 
 ```
@@ -698,7 +727,52 @@ Lambda表达式的参数列表和函数的参数列表类似，但是又有所�
 
 
 
-# 函数调用运算符
+# 函数重载运算符
+
+## 运算符的重载
+
+重载加号实现复数的相加
+
+```c++
+#include <iostream>
+using namespace std;
+class complex{
+public:
+    complex();
+    complex(double real, double imag);
+public:
+    //声明运算符重载
+    complex operator+(const complex &A) const;
+    void display() const;
+private:
+    double m_real;  //实部
+    double m_imag;  //虚部
+};
+complex::complex(): m_real(0.0), m_imag(0.0){ }
+complex::complex(double real, double imag): m_real(real), m_imag(imag){ }
+//实现运算符重载
+complex complex::operator+(const complex &A) const{
+    complex B;
+    B.m_real = this->m_real + A.m_real;
+    B.m_imag = this->m_imag + A.m_imag;
+    return B;
+}
+void complex::display() const{
+    cout<<m_real<<" + "<<m_imag<<"i"<<endl;
+}
+
+int main(){
+    complex c1(4.3, 5.8);
+    complex c2(2.4, 3.7);
+    complex c3;
+    c3 = c1 + c2;
+    c3.display();
+ 
+    return 0;
+}
+```
+
+
 
 ### 重载operator()运算符
 
