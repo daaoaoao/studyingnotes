@@ -98,6 +98,12 @@
 
 > 多进程与多线程间的对比、优劣与选择来自：[多线程还是多进程的选择及区别](https://blog.csdn.net/lishenglong666/article/details/8557215)
 
+# 程序编译与链接
+
+
+
+
+
 # Linux 内核的同步方式
 
 ## 原因
