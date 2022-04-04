@@ -65,3 +65,8 @@ git push -u origin master   （注：此操作目的是把本地仓库push到git
 
 ```
 
+# 同步vs插件
+
+
+
+[VSCode 云同步扩展设置 Settings Sync 插件 - 荔枝ee - 博客园 (cnblogs.com)](https://www.cnblogs.com/lychee/p/11214032.html)
