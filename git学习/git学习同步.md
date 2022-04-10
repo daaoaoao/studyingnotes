@@ -1,5 +1,7 @@
 开始
 
+[45 个 Git 经典操作场景，专治不会合代码 (qq.com)](https://mp.weixin.qq.com/s/M9xbi7iOKs98tAxkmJvKFQ)
+
 # 上传时取消输入用户名和密码
 
 在本地克隆下来的[git](https://so.csdn.net/so/search?q=git&spm=1001.2101.3001.7020)仓库中找到 .git 目录，进入 .git 目录 找到 config 文件打开，添加
