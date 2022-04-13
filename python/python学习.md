@@ -376,6 +376,17 @@ json模块主要有四个比较重要的函数，分别是：
 
 通过调用api接口等到一个json的数据，前端可以通过读取json的数据来进行显示
 
+# lambda
+
+```python
+x = lambda a : a + 10
+print(x(5))
+```
+
+
+
+
+
 # Python中一些方法
 
 ```python
