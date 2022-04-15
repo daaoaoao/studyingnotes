@@ -1,3 +1,24 @@
+# 宏定义
+
+\# 运算符会把 replacement-text 令牌转换为用引号引起来的字符串。
+
+\## 运算符用于连接两个令牌
+
+## C++ 中的预定义宏
+
+C++ 提供了下表所示的一些预定义宏：
+
+| 宏       | 描述                                                         |
+| -------- | ------------------------------------------------------------ |
+| **LINE** | 这会在程序编译时包含当前行号。                               |
+| **FILE** | 这会在程序编译时包含当前文件名。                             |
+| **DATE** | 这会包含一个形式为 month/day/year 的字符串，它表示把源文件转换为目标代码的日期。 |
+| **TIME** | 这会包含一个形式为 hour:minute:second 的字符串，它表示程序被编译的时间。 |
+
+
+
+
+
 # main函数的参数
 
 带形参的main函数，如 main( int argc, char* argv[], char **env ) ，是UNIX、Linux以及Mac OS操作系统中C/C++的main函数标准写法，并且是血统最纯正的main函数写法。
@@ -82,6 +103,14 @@ ForwardIterator lower_bound (ForwardIterator first, ForwardIterator last,
 
 引用在定义时需要添加`&`，在使用时不能添加`&`，使用时添加`&`表示取地址。
 
+## 注意事项
+
+- 引用必须初始化
+- 引用在初始化后，不可以改变
+- **引用的本质在c++内部实现是一个指针常量.**
+
+总结：通过引用参数产生的效果同按地址传递是一样的。引用的语法更清楚简单
+
 ### C++引用作为函数参数
 
 \1) swap1() 直接传递参数的内容，不能达到交换两个数的值的目的。对于 swap1() 来说，a、b 是形参，是作用范围仅限于函数内部的局部变量，它们有自己独立的内存，和 num1、num2 指代的数据不一样。调用函数时分别将 num1、num2 的值传递给 a、b，此后 num1、num2 和 a、b 再无任何关系，在 swap1() 内部修改 a、b 的值不会影响函数外部的 num1、num2，更不会改变 num1、num2 的值。
@@ -91,6 +120,8 @@ ForwardIterator lower_bound (ForwardIterator first, ForwardIterator last,
 \2) swap3() 是按引用传递，能够达到交换两个数的值的目的。调用函数时，分别将 r1、r2 绑定到 num1、num2 所指代的数据，此后 r1 和 num1、r2 和 num2 就都代表同一份数据了，通过 r1 修改数据后会影响 num1，通过 r2 修改数据后也会影响 num2。
 
 从以上代码的编写中可以发现，按引用传参在使用形式上比指针更加直观。在以后的 C++ 编程中，我鼓励读者大量使用引用，它一般可以代替指针（当然指针在C++中也不可或缺），C++ 标准库也是这样做的。
+
+
 
 ### C++引用作为函数返回值
 
@@ -103,7 +134,16 @@ int main() {
     int num1 = 10;
     int num2 = plus10(num1);
     cout << num1 << " " << num2 << endl;
+    //输出20 20
 ```
+
+#### 引用做函数返回值
+
+**作用：** 引用是可以作为函数的返回值存在的
+
+**注意：** **不要返回局部变量引用**
+
+**用法：** 函数调用作为左值
 
 
 
@@ -1161,6 +1201,201 @@ printer(s);     // prints s followed by a space on cout
 for_each(vs.begin(), vs.end(), PrintString(cerr, '\n'));
 ```
 
+##  重载左移运算符
+
+重载左移运算符配合友元可以实现输出自定义数据类型
+
+```c++
+//全局函数实现左移重载
+//ostream对象只能有一个
+ostream& operator<<(ostream& out, Person& p) {
+	out << "a:" << p.m_A << " b:" << p.m_B;
+	return out;
+}
+
+```
+
+##  递增运算符重载
+
+前置递增返回引用，后置递增返回值
+
+```c++
+class MyInteger {
+
+	friend ostream& operator<<(ostream& out, MyInteger myint);
+
+public:
+	MyInteger() {
+		m_Num = 0;
+	}
+	//前置++
+	MyInteger& operator++() {
+		//先++
+		m_Num++;
+		//再返回
+		return *this;
+	}
+
+	//后置++
+	MyInteger operator++(int) {
+		//先返回
+		MyInteger temp = *this; //记录当前本身的值，然后让本身的值加1，但是返回的是以前的值，达到先返回后++；
+		m_Num++;
+		return temp;
+	}
+
+private:
+	int m_Num;
+};
+
+
+ostream& operator<<(ostream& out, MyInteger myint) {
+	out << myint.m_Num;
+	return out;
+}
+
+
+//前置++ 先++ 再返回
+void test01() {
+	MyInteger myInt;
+	cout << ++myInt << endl;
+	cout << myInt << endl;
+}
+
+//后置++ 先返回 再++
+void test02() {
+
+	MyInteger myInt;
+	cout << myInt++ << endl;
+	cout << myInt << endl;
+}
+
+int main() {
+
+	test01();
+	//test02();
+
+	system("pause");
+
+	return 0;
+}
+```
+
+
+
+## 赋值运算符重载
+
+c++编译器至少给一个类添加4个函数
+
+1. 默认构造函数(无参，函数体为空)
+2. 默认析构函数(无参，函数体为空)
+3. 默认拷贝构造函数，对属性进行值拷贝
+4. 赋值运算符 operator=, 对属性进行值拷贝
+
+如果类中有属性指向堆区，做赋值操作时也会出现深浅拷贝问题
+
+
+
+## 关系运算符重载
+
+**作用：**重载关系运算符，可以让两个自定义类型对象进行对比操作
+
+```c++
+class Person
+{
+public:
+	Person(string name, int age)
+	{
+		this->m_Name = name;
+		this->m_Age = age;
+	};
+
+	bool operator==(Person & p)
+	{
+		if (this->m_Name == p.m_Name && this->m_Age == p.m_Age)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	bool operator!=(Person & p)
+	{
+		if (this->m_Name == p.m_Name && this->m_Age == p.m_Age)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+
+	string m_Name;
+	int m_Age;
+};
+```
+
+## 函数调用运算符重载
+
+- 函数调用运算符 () 也可以重载
+- 由于重载后使用的方式非常像函数的调用，因此称为仿函数
+- 仿函数没有固定写法，非常灵活
+
+```c++
+class MyPrint
+{
+public:
+	void operator()(string text)
+	{
+		cout << text << endl;
+	}
+
+};
+void test01()
+{
+	//重载的（）操作符 也称为仿函数
+	MyPrint myFunc;
+	myFunc("hello world");
+}
+
+
+class MyAdd
+{
+public:
+	int operator()(int v1, int v2)
+	{
+		return v1 + v2;
+	}
+};
+
+void test02()
+{
+	MyAdd add;
+	int ret = add(10, 10);
+	cout << "ret = " << ret << endl;
+
+	//匿名对象调用  
+	cout << "MyAdd()(100,100) = " << MyAdd()(100, 100) << endl;
+}
+
+int main() {
+
+	test01();
+	test02();
+
+	system("pause");
+
+	return 0;
+}
+```
+
+
+
+
+
 # 类与对象，继承与多态
 
 ## 对象与类
@@ -1224,6 +1459,20 @@ private 关键字的作用在于更好地隐藏类的内部实现，该向外暴
 
 给成员变量赋值的函数通常称为 set 函数，它们的名字通常以`set`开头，后跟成员变量的名字；读取成员变量的值的函数通常称为 get 函数，它们的名字通常以`get`开头，后跟成员变量的名字。
 
+#### 静态成员
+
+静态成员就是在成员变量和成员函数前加上关键字static，称为静态成员
+
+静态成员分为：
+
+- 静态成员变量
+  - 所有对象共享同一份数据
+  - 在编译阶段分配内存
+  - 类内声明，类外初始化
+- 静态成员函数
+  - 所有对象共享同一个函数
+  - 静态成员函数只能访问静态成员变量
+
 ### 构造函数的重载
 
 和普通成员函数一样，构造函数是允许重载的。一个类可以有多个重载的构造函数，创建对象时根据传递的实参来判断调用哪一个构造函数。
@@ -1248,6 +1497,17 @@ Student(){}
 
 
 
+### 初始化列表
+
+C++提供了初始化列表语法，用来初始化属性
+
+```c++
+
+Person(string name,int age,int height):name(name),age(age),height(height){}
+```
+
+
+
 ## 继承
 
 继承的一般语法为：
@@ -1256,7 +1516,46 @@ class 派生类名:［继承方式］ 基类名{
   派生类新增加的成员
 };
 
-继承方式包括 public（公有的）、private（私有的）和 protected（受保护的），此项是可选的，如果不写，那么默认为 private。我们将在下节详细讲解这些不同的继承方式。
+继承方式包括 public（公有的）、private（私有的）和 protected（受保护的），此项是可选的，如果不写，那么默认为 private。
+
+### 继承同名成员处理方式
+
+问题：当子类与父类出现同名的成员，如何通过子类对象，访问到子类或父类中同名的数据呢？
+
+- 访问子类同名成员 直接访问即可
+- 访问父类同名成员 需要加作用域
+
+### 继承同名静态成员处理方式
+
+问题：继承中同名的静态成员在子类对象上如何进行访问？
+
+静态成员和非静态成员出现同名，处理方式一致
+
+- 访问子类同名成员 直接访问即可
+- 访问父类同名成员 需要加作用域
+
+### 多继承语法
+
+C++允许**一个类继承多个类**
+
+语法：` class 子类 ：继承方式 父类1 ， 继承方式 父类2...`
+
+多继承可能会引发父类中有同名成员出现，需要加作用域区分
+
+**C++实际开发中不建议用多继承**
+
+### 菱形继承
+
+**菱形继承概念：**
+
+ 两个派生类继承同一个基类
+
+ 又有某个类同时继承者两个派生类
+
+ 这种继承被称为菱形继承，或者钻石继承
+
+- 菱形继承带来的主要问题是子类继承两份相同的数据，导致资源浪费以及毫无意义
+- 利用虚继承可以解决菱形继承问题
 
 ## 虚函数
 
@@ -1315,11 +1614,115 @@ C++的多态分为静态多态（编译时多态）和动态多态（运行时�
 
 
 
+### 虚析构和纯虚析构
+
+多态使用时，如果子类中有属性开辟到堆区，那么父类指针在释放时无法调用到子类的析构代码
+
+解决方式：将父类中的析构函数改为**虚析构**或者**纯虚析构**
+
+虚析构和纯虚析构共性：
+
+- 可以解决父类指针释放子类对象
+- 都需要有具体的函数实现
+
+虚析构和纯虚析构区别：
+
+- 如果是纯虚析构，该类属于抽象类，无法实例化对象
+
+虚析构语法：
+
+```
+virtual ~类名(){}
+```
+
+纯虚析构语法：
+
+```
+virtual ~类名() = 0;
+类名::~类名(){}
+```
+
+总结：
+
+ 1. 虚析构或纯虚析构就是用来解决通过父类指针释放子类对象
+
+ 2. 如果子类中没有堆区数据，可以不写为虚析构或纯虚析构
+
+ 3. 拥有纯虚析构函数的类也属于抽象类
+
+
+
 衍生问题:为什么 C++里访问虚函数比访问普通函数慢?
 
 ```
 单继承时性能差不多，多继承的时候会慢
 ```
+
+## 对象模型和this指针
+
+### 成员变量和成员函数分开存储
+
+在C++中，类内的成员变量和成员函数分开存储
+
+只有非静态成员变量才属于类的对象上
+
+### this指针概念
+
+通过4.3.1我们知道在C++中成员变量和成员函数是分开存储的
+
+每一个非静态成员函数只会诞生一份函数实例，也就是说多个同类型的对象会共用一块代码
+
+那么问题是：这一块代码是如何区分那个对象调用自己的呢？
+
+c++通过提供特殊的对象指针，this指针，解决上述问题。**this指针指向被调用的成员函数所属的对象**
+
+this指针是隐含每一个非静态成员函数内的一种指针
+
+this指针不需要定义，直接使用即可
+
+this指针的用途：
+
+- 当形参和成员变量同名时，可用this指针来区分
+- 在类的非静态成员函数中返回对象本身，可使用return *this
+
+### 空指针访问成员函数
+
+C++中空指针也是可以调用成员函数的，但是也要注意有没有用到this指针
+
+如果用到this指针，需要加以判断保证代码的健壮性
+
+### const修饰成员函数
+
+**常函数：**
+
+- 成员函数后加const后我们称为这个函数为**常函数**
+- 常函数内不可以修改成员属性
+- 成员属性声明时加关键字mutable后，在常函数中依然可以修改
+
+**常对象：**
+
+- 声明对象前加const称该对象为常对象
+- 常对象只能调用常函数
+
+### 友元
+
+生活中你的家有客厅(Public)，有你的卧室(Private)
+
+客厅所有来的客人都可以进去，但是你的卧室是私有的，也就是说只有你能进去
+
+但是呢，你也可以允许你的好闺蜜好基友进去。
+
+在程序里，有些私有属性 也想让类外特殊的一些函数或者类进行访问，就需要用到友元的技术
+
+友元的目的就是让一个函数或者类 访问另一个类中私有成员
+
+友元的关键字为 ==friend==
+
+友元的三种实现
+
+- 全局函数做友元
+- 类做友元
+- 成员函数做友元
 
 # STL 教程
 
@@ -1338,27 +1741,97 @@ C++ 标准模板库的核心包括以下三个组件：
 - begin( ) 函数返回一个指向向量开头的迭代器。
 - end( ) 函数返回一个指向向量末尾的迭代器。
 
-# pair
-
-![img](img/092204364017544-16467461903072.jpg)
 
 
-
-```c++
-//例题代码
-pair<string, int>p;
-	typedef vector< pair<string, int> > VP;
-	VP vp;
-	for (int i = 0; i < 5; i++) {
-		cin >> p.first >> p.second;
-		vp.push_back(make_pair(p.first, p.second));
-	}
-	VP::iterator it;
-	for (it = vp.begin(); it != vp.end(); it++)
-		cout << it->first << "," << it->second << endl;
-```
+# 文件
 
 
+
+程序运行时产生的数据都属于临时数据，程序一旦运行结束都会被释放
+
+通过**文件可以将数据持久化**
+
+C++中对文件操作需要包含头文件 ==< fstream >==
+
+文件类型分为两种：
+
+1. **文本文件** - 文件以文本的**ASCII码**形式存储在计算机中
+2. **二进制文件** - 文件以文本的**二进制**形式存储在计算机中，用户一般不能直接读懂它们
+
+操作文件的三大类:
+
+1. ofstream：写操作
+2. ifstream： 读操作
+3. fstream ： 读写操作
+
+## 文本文件
+
+### 写文件
+
+写文件步骤如下：
+
+1. 包含头文件
+
+   \#include <fstream>
+
+2. 创建流对象
+
+   ofstream ofs;
+
+3. 打开文件
+
+   ofs.open("文件路径",打开方式);
+
+4. 写数据
+
+   ofs << "写入的数据";
+
+5. 关闭文件
+
+   ofs.close();
+
+   
+
+文件打开方式：
+
+| 打开方式    | 解释                       |
+| ----------- | -------------------------- |
+| ios::in     | 为读文件而打开文件         |
+| ios::out    | 为写文件而打开文件         |
+| ios::ate    | 初始位置：文件尾           |
+| ios::app    | 追加方式写文件             |
+| ios::trunc  | 如果文件存在先删除，再创建 |
+| ios::binary | 二进制方式                 |
+
+**注意：** 文件打开方式可以配合使用，利用|操作符
+
+**例如：**用二进制方式写文件 `ios::binary | ios:: out`
+
+### 读文件
+
+读文件与写文件步骤相似，但是读取方式相对于比较多
+
+读文件步骤如下：
+
+1. 包含头文件
+
+   \#include <fstream\>
+
+2. 创建流对象
+
+   ifstream ifs;
+
+3. 打开文件并判断文件是否打开成功
+
+   ifs.open("文件路径",打开方式);
+
+4. 读数据
+
+   四种方式读取
+
+5. 关闭文件
+
+   ifs.close();
 
 # C++ 标准库
 
@@ -1397,10 +1870,118 @@ C++ 标准库包含了所有的 C 标准库，为了支持类型安全，做了�
 - 异常处理类
 - 杂项支持库
 
+
+
+# c++信号处理
+
+信号是由操作系统传给进程的中断，会提早终止一个程序。在 UNIX、LINUX、Mac OS X 或 Windows 系统上，可以通过按 Ctrl+C 产生中断。
+
+有些信号不能被程序捕获，但是下表所列信号可以在程序中捕获，并可以基于信号采取适当的动作。这些信号是定义在 C++ 头文件 中。
+
+| 信号    | 描述                                         |
+| ------- | -------------------------------------------- |
+| SIGABRT | 程序的异常终止，如调用 **abort**。           |
+| SIGFPE  | 错误的算术运算，比如除以零或导致溢出的操作。 |
+| SIGILL  | 检测非法指令。                               |
+| SIGINT  | 接收到交互注意信号。                         |
+| SIGSEGV | 非法访问内存。                               |
+| SIGTERM | 发送到程序的终止请求。                       |
+
+## signal() 函数
+
+C++ 信号处理库提供了 **signal** 函数，用来捕获突发事件。以下是 signal() 函数的语法：
+
+```c++
+void (*signal (int sig, void (*func)(int)))(int);
+```
+
+这个函数接收两个参数：第一个参数是一个整数，代表了信号的编号；第二个参数是一个指向信号处理函数的指针。
+
+让我们编写一个简单的 C++ 程序，使用 signal() 函数捕获 SIGINT 信号。不管您想在程序中捕获什么信号，您都必须使用 **signal** 函数来注册信号，并将其与信号处理程序相关联。看看下面的实例：
+
+```c++
+#include <iostream>
+#include <csignal>
+using namespace std;
+void signalHandler( int signum ){
+    cout << "Interrupt signal (" << signum << ") received.\n";
+
+    // 清理并关闭
+    // 终止程序  
+   exit(signum);  
+}
+int main ()
+{
+    // 注册信号 SIGINT 和信号处理程序
+    signal(SIGINT, signalHandler);  
+    while(1){
+       cout << "Going to sleep...." << endl;
+       sleep(1);
+    }
+
+    return 0;}
+```
+
+当上面的代码被编译和执行时，它会产生下列结果：
+
+```
+Going to sleep....Going to sleep....Going to sleep....
+```
+
+现在，按 Ctrl+C 来中断程序，您会看到程序捕获信号，程序打印如下内容并退出：
+
+```
+Going to sleep....Going to sleep....Going to sleep....Interrupt signal (2) received.
+```
+
+## raise() 函数
+
+您可以使用函数 **raise()** 生成信号，该函数带有一个整数信号编号作为参数，语法如下：
+
+```
+int raise (signal sig);
+```
+
+在这里，**sig** 是要发送的信号的编号，这些信号包括：SIGINT、SIGABRT、SIGFPE、SIGILL、SIGSEGV、SIGTERM、SIGHUP。以下是我们使用 raise() 函数内部生成信号的实例：
+
+```c++
+#include <iostream>#include <csignal>
+using namespace std;
+void signalHandler( int signum ){
+    cout << "Interrupt signal (" << signum << ") received.\n";
+
+    // 清理并关闭
+    // 终止程序 
+
+   exit(signum);  }
+int main (){
+    int i = 0;
+    // 注册信号 SIGINT 和信号处理程序
+    signal(SIGINT, signalHandler);  
+
+    while(++i){
+       cout << "Going to sleep...." << endl;
+       if( i == 3 ){
+          raise( SIGINT);
+       }
+       Sleep(1);
+    }
+
+    return 0;}
+```
+
+当上面的代码被编译和执行时，它会产生下列结果，并会自动退出：
+
+```
+Going to sleep....Going to sleep....Going to sleep....Interrupt signal (2) received.
+```
+
 # 多线程
 
 - 基于进程的多任务处理是程序的并发执行。
 - 基于线程的多任务处理是同一程序的片段的并发执行
+
+多线程程序包含可以同时运行的两个或多个部分。这样的程序中的每个部分称为一个线程，每个线程定义了一个单独的执行路径。
 
 ```c++
 #include<pthread.h>
@@ -1414,6 +1995,20 @@ thread 指向线程标识符指针。
 attr	一个不透明的属性对象，可以被用来设置线程属性。您可以指定线程属性对象，也可以使用默认值 NULL。
 start_routine	线程运行函数起始地址，一旦线程被创建就会执行。
 arg	运行函数的参数。它必须通过把引用作为指针强制转换为 void 类型进行传递。如果没有传递参数，则使用 NULL。
+
+创建线程成功时，函数返回 0，若返回值不为 0 则说明创建线程失败。
+
+
+
+## 创建/终止线程
+
+```c++
+#include <pthread.h>
+//创建
+pthread_create (thread, attr, start_routine, arg)
+//终止
+pthread_exit (status)
+```
 
 **pthread_exit** 用于显式地退出一个线程。通常情况下，pthread_exit() 函数是在线程完成工作后无需继续存在时被调用。
 
@@ -1498,33 +2093,539 @@ int main()
 g++ -std=c++11 test.cpp  使用参数来进行编译
 ```
 
-# c++ 11新语法
 
-自动类型推导auto
+
+
+
+# cgi
+
+ CGI(公共网关接口)定义了web服务器与外部内容生成程序之间交互的方法，通常是指CGI程序或者CGI脚本，它是在网站上实现动态页面的最简单和常用的方法。本文将对如何在Apache web服务器上建立CGI以及如何编写CGI程序进行介绍。
+
+
+
+## HTTP 头信息
+
+行 **Content-type:text/html\r\n\r\n** 是 HTTP 头信息的组成部分，它被发送到浏览器，以便更好地理解页面内容。HTTP 头信息的形式如下：
+
+```
+HTTP 字段名称: 字段内容 例如Content-type: text/html\r\n\r\n
+```
+
+还有一些其他的重要的 HTTP 头信息，这些在您的 CGI 编程中都会经常被用到。
+
+| 头信息              | 描述                                                         |
+| ------------------- | ------------------------------------------------------------ |
+| Content-type:       | MIME 字符串，定义返回的文件格式。例如 Content-type:text/html。 |
+| Expires: Date       | 信息变成无效的日期。浏览器使用它来判断一个页面何时需要刷新。一个有效的日期字符串的格式应为 01 Jan 1998 12:00:00 GMT。 |
+| Location: URL       | 这个 URL 是指应该返回的 URL，而不是请求的 URL。你可以使用它来重定向一个请求到任意的文件。 |
+| Last-modified: Date | 资源的最后修改日期。                                         |
+| Content-length: N   | 要返回的数据的长度，以字节为单位。浏览器使用这个值来表示一个文件的预计下载时间。 |
+| Set-Cookie: String  | 通过 *string* 设置 cookie。                                  |
+
+## CGI 环境变量
+
+所有的 CGI 程序都可以访问下列的环境变量。这些变量在编写 CGI 程序时扮演了非常重要的角色。
+
+| 变量名          | 描述                                                         |
+| --------------- | ------------------------------------------------------------ |
+| CONTENT_TYPE    | 内容的数据类型。当客户端向服务器发送附加内容时使用。例如，文件上传等功能。 |
+| CONTENT_LENGTH  | 查询的信息长度。只对 POST 请求可用。                         |
+| HTTP_COOKIE     | 以键 & 值对的形式返回设置的 cookies。                        |
+| HTTP_USER_AGENT | 用户代理请求标头字段，递交用户发起请求的有关信息，包含了浏览器的名称、版本和其他平台性的附加信息。 |
+| PATH_INFO       | CGI 脚本的路径。                                             |
+| QUERY_STRING    | 通过 GET 方法发送请求时的 URL 编码信息，包含 URL 中问号后面的参数。 |
+| REMOTE_ADDR     | 发出请求的远程主机的 IP 地址。这在日志记录和认证时是非常有用的。 |
+| REMOTE_HOST     | 发出请求的主机的完全限定名称。如果此信息不可用，则可以用 REMOTE_ADDR 来获取 IP 地址。 |
+| REQUEST_METHOD  | 用于发出请求的方法。最常见的方法是 GET 和 POST。             |
+| SCRIPT_FILENAME | CGI 脚本的完整路径。                                         |
+| SCRIPT_NAME     | CGI 脚本的名称。                                             |
+| SERVER_NAME     | 服务器的主机名或 IP 地址。                                   |
+| SERVER_SOFTWARE | 服务器上运行的软件的名称和版本。                             |
+
+## C++ CGI 库
+
+在真实的实例中，您需要通过 CGI 程序执行许多操作。这里有一个专为 C++ 程序而编写的 CGI 库，我们可以从 ftp://ftp.gnu.org/gnu/cgicc/ 上下载这个 CGI 库，并按照下面的步骤安装库：
+
+```
+$tar xzf cgicc-X.X.X.tar.gz $cd cgicc-X.X.X/ $./configure --prefix=/usr $make$make install
+```
+
+您可以点击 C++ CGI Lib Documentation，查看相关的库文档。
+
+## GET 和 POST 方法
+
+您可能有遇到过这样的情况，当您需要从浏览器传递一些信息到 Web 服务器，最后再传到 CGI 程序。通常浏览器会使用两种方法把这个信息传到 Web 服务器，分别是 GET 和 POST 方法。
+
+## 使用 GET 方法传递信息
+
+GET 方法发送已编码的用户信息追加到页面请求中。页面和已编码信息通过 ? 字符分隔开，如下所示：
+
+```
+http://www.test.com/cgi-bin/cpp.cgi?key1=value1&key2=value2
+```
+
+GET 方法是默认的从浏览器向 Web 服务器传信息的方法，它会在浏览器的地址栏中生成一串很长的字符串。当您向服务器传密码或其他一些敏感信息时，不要使用 GET 方法。GET 方法有大小限制，在一个请求字符串中最多可以传 1024 个字符。
+
+当使用 GET 方法时，是使用 QUERY_STRING http 头来传递信息，在 CGI 程序中可使用 QUERY_STRING 环境变量来访问。
+
+您可以通过在 URL 后跟上简单连接的键值对，也可以通过使用 HTML
+
+标签的 GET 方法来传信息。
+
+
+
+## 简单的 URL 实例：Get 方法
+
+下面是一个简单的 URL，使用 GET 方法传递两个值给 hello_get.py 程序。
+
+/cgi-bin/cpp_get.cgi?first_name=ZARA&last_name=ALI
+
+下面的实例生成 **cpp_get.cgi** CGI 程序，用于处理 Web 浏览器给出的输入。通过使用 C++ CGI 库，可以很容易地访问传递的信息：
+
+```
+#include <iostream>#include <vector>  #include <string>  #include <stdio.h>  #include <stdlib.h> #include <cgicc/CgiDefs.h> #include <cgicc/Cgicc.h> #include <cgicc/HTTPHTMLHeader.h> #include <cgicc/HTMLClasses.h>  using namespace std;using namespace cgicc;int main (){
+   Cgicc formData;
+   
+   cout << "Content-type:text/html\r\n\r\n";
+   cout << "<html>\n";
+   cout << "<head>\n";
+   cout << "<title>使用 GET 和 POST 方法</title>\n";
+   cout << "</head>\n";
+   cout << "<body>\n";
+
+   form_iterator fi = formData.getElement("first_name");  
+   if( !fi->isEmpty() && fi != (*formData).end()) {  
+      cout << "名：" << **fi << endl;  
+   }else{
+      cout << "No text entered for first name" << endl;  
+   }
+   cout << "<br/>\n";
+   fi = formData.getElement("last_name");  
+   if( !fi->isEmpty() &&fi != (*formData).end()) {  
+      cout << "姓：" << **fi << endl;  
+   }else{
+      cout << "No text entered for last name" << endl;  
+   }
+   cout << "<br/>\n";
+
+   cout << "</body>\n";
+   cout << "</html>\n";
+   
+   return 0;}
+```
+
+现在，编译上面的程序，如下所示：
+
+```
+$g++ -o cpp_get.cgi cpp_get.cpp -lcgicc
+```
+
+生成 cpp_get.cgi，并把它放在 CGI 目录中，并尝试使用下面的链接进行访问：
+
+/cgi-bin/cpp_get.cgi?first_name=ZARA&last_name=ALI
+
+这会产生以下结果：
+
+```
+名：ZARA 姓：ALI
+```
+
+## 简单的表单实例：GET 方法
+
+下面是一个简单的实例，使用 HTML 表单和提交按钮传递两个值。我们将使用相同的 CGI 脚本 cpp_get.cgi 来处理输入。
+
+```
+<form action="/cgi-bin/cpp_get.cgi" method="get">名：<input type="text" name="first_name">  <br /> 姓：<input type="text" name="last_name" /><input type="submit" value="提交" /></form>
+```
+
+下面是上述表单的实际输出，请输入名和姓，然后点击提交按钮查看结果。
+
+## 使用 POST 方法传递信息
+
+一个更可靠的向 CGI 程序传递信息的方法是 POST 方法。这种方法打包信息的方式与 GET 方法相同，不同的是，它不是把信息以文本字符串形式放在 URL 中的 ? 之后进行传递，而是把它以单独的消息形式进行传递。该消息是以标准输入的形式传给 CGI 脚本的。
+
+我们同样使用 cpp_get.cgi 程序来处理 POST 方法。让我们以同样的例子，通过使用 HTML 表单和提交按钮来传递两个值，只不过这次我们使用的不是 GET 方法，而是 POST 方法，如下所示：
+
+```
+<form action="/cgi-bin/cpp_get.cgi" method="post">名：<input type="text" name="first_name"><br />姓：<input type="text" name="last_name" /> <input type="submit" value="提交" /></form>
+```
+
+## 向 CGI 程序传递复选框数据
+
+当需要选择多个选项时，我们使用复选框。
+
+下面的 HTML 代码实例是一个带有两个复选框的表单：
+
+```
+<form action="/cgi-bin/cpp_checkbox.cgi" 
+         method="POST" 
+         target="_blank"><input type="checkbox" name="maths" value="on" /> 数学<input type="checkbox" name="physics" value="on" /> 物理<input type="submit" value="选择学科" /></form>
+```
+
+下面的 C++ 程序会生成 cpp_checkbox.cgi 脚本，用于处理 Web 浏览器通过复选框给出的输入。
+
+```
+#include <iostream>#include <vector>  
+#include <string>  #include <stdio.h>  
+#include <stdlib.h> #include <cgicc/CgiDefs.h> 
+#include <cgicc/Cgicc.h> 
+#include <cgicc/HTTPHTMLHeader.h> 
+#include <cgicc/HTMLClasses.h> 
+using namespace std;using namespace cgicc;int main (){
+   Cgicc formData;
+   bool maths_flag, physics_flag;
+
+   cout << "Content-type:text/html\r\n\r\n";
+   cout << "<html>\n";
+   cout << "<head>\n";
+   cout << "<title>向 CGI 程序传递复选框数据</title>\n";
+   cout << "</head>\n";
+   cout << "<body>\n";
+
+   maths_flag = formData.queryCheckbox("maths");
+   if( maths_flag ) {  
+      cout << "Maths Flag: ON " << endl;  
+   }else{
+      cout << "Maths Flag: OFF " << endl;  
+   }
+   cout << "<br/>\n";
+
+   physics_flag = formData.queryCheckbox("physics");
+   if( physics_flag ) {  
+      cout << "Physics Flag: ON " << endl;  
+   }else{
+      cout << "Physics Flag: OFF " << endl;  
+   }
+   cout << "<br/>\n";
+   cout << "</body>\n";
+   cout << "</html>\n";
+   
+   return 0;}
+```
+
+## 向 CGI 程序传递单选按钮数据
+
+当只需要选择一个选项时，我们使用单选按钮。
+
+下面的 HTML 代码实例是一个带有两个单选按钮的表单：
+
+```
+<form action="/cgi-bin/cpp_radiobutton.cgi" 
+         method="post" 
+         target="_blank"><input type="radio" name="subject" value="maths" 
+                                    checked="checked"/> 数学 
+<input type="radio" name="subject" value="physics" /> 物理<input type="submit" value="选择学科" /></form>
+```
+
+下面的 C++ 程序会生成 cpp_radiobutton.cgi 脚本，用于处理 Web 浏览器通过单选按钮给出的输入。
+
+```
+#include <iostream>
+#include <vector>  
+#include <string>  
+#include <stdio.h>  
+#include <stdlib.h> 
+#include <cgicc/CgiDefs.h> 
+#include <cgicc/Cgicc.h> 
+#include <cgicc/HTTPHTMLHeader.h> 
+#include <cgicc/HTMLClasses.h> 
+using namespace std;
+using namespace cgicc;
+int main (){
+   Cgicc formData;
+  
+   cout << "Content-type:text/html\r\n\r\n";
+   cout << "<html>\n";
+   cout << "<head>\n";
+   cout << "<title>向 CGI 程序传递单选按钮数据</title>\n";
+   cout << "</head>\n";
+   cout << "<body>\n";
+
+   form_iterator fi = formData.getElement("subject");  
+   if( !fi->isEmpty() && fi != (*formData).end()) {  
+      cout << "Radio box selected: " << **fi << endl;  
+   }
+  
+   cout << "<br/>\n";
+   cout << "</body>\n";
+   cout << "</html>\n";
+   
+   return 0;}
+```
+
+## 向 CGI 程序传递文本区域数据
+
+当需要向 CGI 程序传递多行文本时，我们使用 TEXTAREA 元素。
+
+下面的 HTML 代码实例是一个带有 TEXTAREA 框的表单：
+
+```
+<form action="/cgi-bin/cpp_textarea.cgi" 
+         method="post" 
+         target="_blank"><textarea name="textcontent" cols="40" rows="4">请在这里输入文本...</textarea><input type="submit" value="提交" /></form>
+```
+
+下面的 C++ 程序会生成 cpp_textarea.cgi 脚本，用于处理 Web 浏览器通过文本区域给出的输入。
+
+```
+#include <iostream>
+#include <vector>  
+#include <string>  
+#include <stdio.h>  
+#include <stdlib.h> 
+#include <cgicc/CgiDefs.h> 
+#include <cgicc/Cgicc.h> 
+#include <cgicc/HTTPHTMLHeader.h> 
+#include <cgicc/HTMLClasses.h> 
+using namespace std;
+using namespace cgicc;
+int main (){
+   Cgicc formData;
+  
+   cout << "Content-type:text/html\r\n\r\n";
+   cout << "<html>\n";
+   cout << "<head>\n";
+   cout << "<title>向 CGI 程序传递文本区域数据</title>\n";
+   cout << "</head>\n";
+   cout << "<body>\n";
+
+   form_iterator fi = formData.getElement("textcontent");  
+   if( !fi->isEmpty() && fi != (*formData).end()) {  
+      cout << "Text Content: " << **fi << endl;  
+   }else{
+      cout << "No text entered" << endl;  
+   }
+  
+   cout << "<br/>\n";
+   cout << "</body>\n";
+   cout << "</html>\n";
+   
+   return 0;}
+```
+
+## 向 CGI 程序传递下拉框数据
+
+当有多个选项可用，但只能选择一个或两个选项时，我们使用下拉框。
+
+下面的 HTML 代码实例是一个带有下拉框的表单：
+
+```
+<form action="/cgi-bin/cpp_dropdown.cgi" 
+                       method="post" target="_blank"><select name="dropdown"><option value="Maths" selected>数学</option><option value="Physics">物理</option></select><input type="submit" value="提交"/></form>
+```
+
+下面的 C++ 程序会生成 cpp_dropdown.cgi 脚本，用于处理 Web 浏览器通过下拉框给出的输入。
+
+```
+#include <iostream>
+#include <vector>  
+#include <string>  
+#include <stdio.h>  
+#include <stdlib.h> 
+#include <cgicc/CgiDefs.h> 
+#include <cgicc/Cgicc.h> 
+#include <cgicc/HTTPHTMLHeader.h>
+#include <cgicc/HTMLClasses.h> 
+using namespace std;
+using namespace cgicc;
+int main (){
+   Cgicc formData;
+  
+   cout << "Content-type:text/html\r\n\r\n";
+   cout << "<html>\n";
+   cout << "<head>\n";
+   cout << "<title>向 CGI 程序传递下拉框数据</title>\n";
+   cout << "</head>\n";
+   cout << "<body>\n";
+
+   form_iterator fi = formData.getElement("dropdown");  
+   if( !fi->isEmpty() && fi != (*formData).end()) {  
+      cout << "Value Selected: " << **fi << endl;  
+   }
+  
+   cout << "<br/>\n";
+   cout << "</body>\n";
+   cout << "</html>\n";
+   
+   return 0;}
+```
+
+## 在 CGI 中使用 Cookies
+
+HTTP 协议是一种无状态的协议。但对于一个商业网站，它需要在不同页面间保持会话信息。例如，一个用户在完成多个页面的步骤之后结束注册。但是，如何在所有网页中保持用户的会话信息。
+
+在许多情况下，使用 cookies 是记忆和跟踪有关用户喜好、购买、佣金以及其他为追求更好的游客体验或网站统计所需信息的最有效的方法。
+
+### 它是如何工作的
+
+服务器以 cookie 的形式向访客的浏览器发送一些数据。如果浏览器接受了 cookie，则 cookie 会以纯文本记录的形式存储在访客的硬盘上。现在，当访客访问网站上的另一个页面时，会检索 cookie。一旦找到 cookie，服务器就知道存储了什么。
+
+cookie 是一种纯文本的数据记录，带有 5 个可变长度的字段：
+
+- **Expires :** cookie 的过期日期。如果此字段留空，cookie 会在访客退出浏览器时过期。
+- **Domain :** 网站的域名。
+- **Path :** 设置 cookie 的目录或网页的路径。如果您想从任意的目录或网页检索 cookie，此字段可以留空。
+- **Secure :** 如果此字段包含单词 "secure"，那么 cookie 只能通过安全服务器进行检索。如果此字段留空，则不存在该限制。
+- **Name=Value :** cookie 以键值对的形式被设置和获取。
+
+### 设置 Cookies
+
+向浏览器发送 cookies 是非常简单的。这些 cookies 会在 Content-type 字段之前，与 HTTP 头一起被发送。假设您想设置 UserID 和 Password 为 cookies，设置 cookies 的步骤如下所示：
 
 ```c++
-auto i = 0;
-auto c = 'c';
-auto s = "hello"
-
-for(auto its = v.begin();its!=v.end();its++)
+#include <iostream>
+using namespace std;int main ()
 {
-    cout<<*its<<endl;
-}
+   cout << "Set-Cookie:UserID=XYZ;\r\n";
+   cout << "Set-Cookie:Password=XYZ123;\r\n";
+   cout << "Set-Cookie:Domain=www.w3cschool.cc;\r\n";
+   cout << "Set-Cookie:Path=/perl;\n";
+   cout << "Content-type:text/html\r\n\r\n";
 
+   cout << "<html>\n";
+   cout << "<head>\n";
+   cout << "<title>CGI 中的 Cookies</title>\n";
+   cout << "</head>\n";
+   cout << "<body>\n";
+
+   cout << "设置 cookies" << endl;  
+  
+   cout << "<br/>\n";
+   cout << "</body>\n";
+   cout << "</html>\n";
+   
+   return 0;}
 ```
 
-lambda表达式
+从这个实例中，我们了解了如何设置 cookies。我们使用 **Set-Cookie** HTTP 头来设置 cookies。
 
-Range-based for-loop
+在这里，有一些设置 cookies 的属性是可选的，比如 Expires、Domain 和 Path。值得注意的是，cookies 是在发送行 **"Content-type:text/html\r\n\r\n** 之前被设置的。
 
-支持数组和迭代器的遍历
+编译上面的程序，生成 setcookies.cgi，并尝试使用下面的链接设置 cookies。它会在您的计算机上设置四个 cookies：
 
-```c++
-int p[8]={2,3,4,56,6,7,7,7};
-    for(auto &x : p)
-    {
-        cout<<x;
-    }
+/cgi-bin/setcookies.cgi
+
+### 获取 Cookies
+
+检索所有设置的 cookies 是非常简单的。cookies 被存储在 CGI 环境变量 HTTP_COOKIE 中，且它们的形式如下：
+
+```
+key1=value1;key2=value2;key3=value3....
 ```
 
+下面的实例演示了如何获取 cookies。
+
+```
+#include <iostream>
+#include <vector>  
+#include <string>  
+#include <stdio.h>  
+#include <stdlib.h> 
+#include <cgicc/CgiDefs.h> 
+#include <cgicc/Cgicc.h> 
+#include <cgicc/HTTPHTMLHeader.h> 
+#include <cgicc/HTMLClasses.h>
+using namespace std;
+using namespace cgicc;
+int main (){
+   Cgicc cgi;
+   const_cookie_iterator cci;
+
+   cout << "Content-type:text/html\r\n\r\n";
+   cout << "<html>\n";
+   cout << "<head>\n";
+   cout << "<title>CGI 中的 Cookies</title>\n";
+   cout << "</head>\n";
+   cout << "<body>\n";
+   cout << "<table border = \"0\" cellspacing = \"2\">";
+   
+   // 获取环境变量
+   const CgiEnvironment& env = cgi.getEnvironment();
+
+   for( cci = env.getCookieList().begin();
+        cci != env.getCookieList().end(); 
+        ++cci )
+   {
+      cout << "<tr><td>" << cci->getName() << "</td><td>";
+      cout << cci->getValue();                                 
+      cout << "</td></tr>\n";
+   }
+   cout << "</table><\n";
+  
+   cout << "<br/>\n";
+   cout << "</body>\n";
+   cout << "</html>\n";
+   
+   return 0;}
+```
+
+现在，编译上面的程序，生成 getcookies.cgi，并尝试使用下面的链接获取您的计算机上所有可用的 cookies：
+
+/cgi-bin/getcookies.cgi
+
+这会产生一个列表，显示了上一节中设置的四个 cookies 以及您的计算机上所有其他的 cookies：
+
+```
+UserID XYZ Password XYZ123 Domain www.w3cschool.cc Path /perl
+```
+
+## 文件上传实例
+
+为了上传一个文件，HTML 表单必须把 enctype 属性设置为 **multipart/form-data**。带有文件类型的 input 标签会创建一个 "Browse" 按钮。
+
+```
+<html><body>
+   <form enctype="multipart/form-data" 
+            action="/cgi-bin/cpp_uploadfile.cgi" 
+            method="post">
+   <p>文件：<input type="file" name="userfile" /></p>
+   <p><input type="submit" value="上传" /></p>
+   </form></body></html>
+```
+
+这段代码的结果是下面的表单：
+
+文件：
+
+**注意：**上面的实例已经故意禁用了保存上传的文件在我们的服务器上。您可以在自己的服务器上尝试上面的代码。
+
+下面是用于处理文件上传的脚本 **cpp_uploadfile.cpp**：
+
+```
+#include <iostream>
+#include <vector>  
+#include <string>  
+#include <stdio.h>  
+#include <stdlib.h> 
+#include <cgicc/CgiDefs.h> 
+#include <cgicc/Cgicc.h> 
+#include <cgicc/HTTPHTMLHeader.h> 
+#include <cgicc/HTMLClasses.h>
+using namespace std;
+using namespace cgicc;
+int main (){
+   Cgicc cgi;
+
+   cout << "Content-type:text/html\r\n\r\n";
+   cout << "<html>\n";
+   cout << "<head>\n";
+   cout << "<title>CGI 中的文件上传</title>\n";
+   cout << "</head>\n";
+   cout << "<body>\n";
+
+   // 获取要被上传的文件列表
+   const_file_iterator file = cgi.getFile("userfile");
+   if(file != cgi.getFiles().end()) {
+      // 在 cout 中发送数据类型
+      cout << HTTPContentHeader(file->getDataType());
+      // 在 cout 中写入内容
+      file->writeToStream(cout);
+   }
+   cout << "<文件上传成功>\n";
+   cout << "</body>\n";
+   cout << "</html>\n";
+   
+   return 0;}
+```
+
+上面的实例是在 **cout** 流中写入内容，但您可以打开文件流，并把上传的文件内容保存在目标位置的某个文件中

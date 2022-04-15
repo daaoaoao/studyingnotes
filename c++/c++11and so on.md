@@ -16,7 +16,7 @@ std::forward_list（单向列表）
 
 # auto，decltype和decltype（auto）的用法
 
-### auto
+## auto
 
 C++11新标准引入了auto类型说明符，用它就能让编译器替我们去分析表达式所属的类型。和原来那些只对应某种特定的类型说明符(例如 int)不同，
 
@@ -43,6 +43,18 @@ auto p2 = &x; //p2是指针类型int*
 
 有的时候我们还会遇到这种情况，**我们希望从表达式中推断出要定义变量的类型，但却不想用表达式的值去初始化变量。**还有可能是函数的返回类型为某表达式的值类型。在这些时候auto显得就无力了，所以C++11又引入了第二种类型说明符decltype，**它的作用是选择并返回操作数的数据类型。在此过程中，编译器只是分析表达式并得到它的类型，却不进行实际的计算表达式的值。**
 
+c++14开始可以让普通函数具备返回值推导
+
+```c++
+//合法
+template<typename T, typename U>
+auto add(T x, U y) {
+    return x+y;
+}
+```
+
+
+
 ## decltype(auto)
 
 c++14新增的类型指示符，可以用来声明变量遗迹函数的返回类型
@@ -52,6 +64,28 @@ int e = 4;
 const int* f = &e; // f是底层const
 decltype(auto) j = f;//j的类型是const int* 并且指向的是e
 ```
+
+# 初始化列表
+
+C++11 提供了统一的语法来初始化任意的对象，例如：
+
+```c++
+struct A {
+    int a;
+    float b;
+};
+struct B {
+  B(int _a, float _b): a(_a), b(_b) {}
+  private:
+    int a;
+    float b;
+};
+
+A a {1, 1.1};    // 统一的初始化语法
+B b {2, 2.2};
+```
+
+
 
 # c++ NULL和nullptr的区别
 
@@ -125,7 +159,7 @@ auto_ptr不支持拷贝和赋值操作，不能用在STL标准容器中。STL容
 
 6\) weak_ptr 是一种不控制对象生命周期的智能指针, 它指向一个 shared_ptr 管理的对象. 进行该对象的内存管理的是那个强引用的 shared_ptr. weak_ptr只是提供了对管理对象的一个访问手段。weak_ptr 设计的目的是为配合 shared_ptr 而引入的一种智能指针来协助 shared_ptr 工作, 它只可以从一个 shared_ptr 或另一个 weak_ptr 对象构造, 它的构造和析构不会引起引用记数的增加或减少.
 
-# auto_ptr作用
+## auto_ptr作用
 
 1\) auto_ptr的出现，主要是为了解决“有异常抛出时发生内存泄漏”的问题；抛出异常，将导致指针p所指向的空间得不到释放而导致内存泄漏；
 
@@ -143,7 +177,7 @@ auto_ptr不支持拷贝和赋值操作，不能用在STL标准容器中。STL容
 
 8\) T* get(),获得auto_ptr所拥有的指针；T* release()，释放auto_ptr的所有权，并将所有用的指针返回。
 
-# 智能指针的循环引用
+## 智能指针的循环引用
 
 循环引用是指使用多个智能指针share_ptr时，出现了指针之间相互指向，从而形成环的情况，有点类似于死锁的情况，这种情况下，智能指针往往不能正常调用对象的析构函数，从而造成内存泄漏。
 
@@ -206,7 +240,7 @@ int main()
 
 在实际编程过程中，应该尽量避免出现智能指针之前相互指向的情况，如果不可避免，可以使用使用弱指针——weak_ptr，它不增加引用计数，只要出了作用域就会自动析构。
 
-# 手写实现智能指针类需要实现的函数？
+## 手写实现智能指针类需要实现的函数？
 
 1\) 智能指针是一个数据类型，一般用模板实现，模拟指针行为的同时还提供自动垃圾回收机制。它会自动记录SmartPointer<T*>对象的引用计数，一旦T类型对象的引用计数为0，就释放该对象。
 
@@ -216,6 +250,209 @@ int main()
 
 2\) 一个构造函数、拷贝构造函数、复制构造函数、析构函数、移动函数；
 
-# 智能指针出现循环引用怎么解决
+## 智能指针出现循环引用怎么解决
 
 弱指针用于专门解决shared_ptr循环引用的问题，weak_ptr不会修改引用计数，即其存在与否并不影响对象的引用计数器。循环引用就是：两个对象互相使用一个shared_ptr成员变量指向对方。弱引用并不对对象的内存进行管理，在功能上类似于普通指针，然而一个比较大的区别是，弱引用能检测到所管理的对象是否已经被释放，从而避免访问非法内存。
+
+# 继承构造
+
+在继承体系中，如果派生类想要使用基类的构造函数，需要在构造函数中显式声明。
+
+假若基类拥有为数众多的不同版本的构造函数，这样，在派生类中得写很多对应的“透传”构造函数。如下：
+
+```
+struct A
+{
+  A(int i) {}
+  A(double d,int i){}
+  A(float f,int i,const char* c){}
+  //...等等系列的构造函数版本
+}；
+struct B:A
+{
+  B(int i):A(i){}
+  B(double d,int i):A(d,i){}
+  B(folat f,int i,const char* c):A(f,i,e){}
+  //......等等好多个和基类构造函数对应的构造函数
+}；
+```
+
+C++11的继承构造：
+
+```
+struct A
+{
+  A(int i) {}
+  A(double d,int i){}
+  A(float f,int i,const char* c){}
+  //...等等系列的构造函数版本
+}；
+struct B:A
+{
+  using A::A;
+  //关于基类各构造函数的继承一句话搞定
+  //......
+}；
+```
+
+如果一个继承构造函数不被相关的代码使用，编译器不会为之产生真正的函数代码，这样比透传基类各种构造函数更加节省目标代码空间。
+
+
+
+# 新增容器
+
+## std::array
+
+std::array 保存在栈内存中，相比堆内存中的 std::vector，我们能够灵活的访问这里面的元素，从而获得更高的性能。
+
+std::array 会在编译时创建一个固定大小的数组，std::array 不能够被隐式的转换成指针，使用 std::array只需指定其类型和大小即可：
+
+```
+std::array<int, 4> arr= {1,2,3,4};
+
+int len = 4;
+std::array<int, len> arr = {1,2,3,4}; // 非法, 数组大小参数必须是常量表达式
+```
+
+当我们开始用上了 std::array 时，难免会遇到要将其兼容 C 风格的接口，这里有三种做法：
+
+```
+void foo(int *p, int len) {
+    return;
+}
+
+std::array<int 4> arr = {1,2,3,4};
+
+// C 风格接口传参
+// foo(arr, arr.size());           // 非法, 无法隐式转换
+foo(&arr[0], arr.size());
+foo(arr.data(), arr.size());
+
+// 使用 `std::sort`
+std::sort(arr.begin(), arr.end());
+```
+
+## std::forward_list
+
+std::forward_list 是一个列表容器，使用方法和 std::list 基本类似。
+
+和 std::list 的双向链表的实现不同，std::forward_list 使用单向链表进行实现，提供了 O(1) 复杂度的元素插入，不支持快速随机访问（这也是链表的特点），也是标准库容器中唯一一个不提供 size() 方法的容器。当不需要双向迭代时，具有比 std::list 更高的空间利用率。
+
+## 无序容器
+
+C++11 引入了两组无序容器： `std::unordered_map/std::unordered_multimap`和 `std::unordered_set/std::unordered_multiset`。
+
+无序容器中的元素是不进行排序的，内部通过 Hash 表实现，插入和搜索元素的平均复杂度为 O(constant)。
+
+## 元组 std::tuple
+
+元组的使用有三个核心的函数：
+
+`std::make_tuple`: 构造元组 `std::get`: 获得元组某个位置的值 `std::tie`: 元组拆包
+
+```c++
+#include <tuple>
+#include <iostream>
+
+auto get_student(int id)
+{
+    // 返回类型被推断为 std::tuple<double, char, std::string>
+    if (id == 0)
+        return std::make_tuple(3.8, 'A', "张三");
+    if (id == 1)
+        return std::make_tuple(2.9, 'C', "李四");
+    if (id == 2)
+        return std::make_tuple(1.7, 'D', "王五");
+    return std::make_tuple(0.0, 'D', "null");   
+    // 如果只写 0 会出现推断错误, 编译失败
+}
+
+int main()
+{
+    auto student = get_student(0);
+    std::cout << "ID: 0, "
+    << "GPA: " << std::get<0>(student) << ", "
+    << "成绩: " << std::get<1>(student) << ", "
+    << "姓名: " << std::get<2>(student) << '\n';
+
+    double gpa;
+    char grade;
+    std::string name;
+    
+    // 元组进行拆包
+    std::tie(gpa, grade, name) = get_student(1);
+    std::cout << "ID: 1, "
+    << "GPA: " << gpa << ", "
+    << "成绩: " << grade << ", "
+    << "姓名: " << name << '\n';
+
+}
+```
+
+合并两个元组，可以通过 std::tuple_cat 来实现。
+
+```c++
+auto new_tuple = std::tuple_cat(get_student(1), std::move(t));
+```
+
+
+
+# 正则表达式
+
+正则表达式描述了一种字符串匹配的模式。一般使用正则表达式主要是实现下面三个需求：
+
+1. 检查一个串是否包含某种形式的子串；
+2. 将匹配的子串替换；
+3. 从某个串中取出符合条件的子串。
+
+C++11 提供的正则表达式库操作 std::string 对象，对模式 std::regex (本质是 std::basic_regex)进行初始化，通过 std::regex_match 进行匹配，从而产生 std::smatch （本质是 std::match_results 对象）。
+
+我们通过一个简单的例子来简单介绍这个库的使用。考虑下面的正则表达式：
+
+[a-z]+.txt: 在这个正则表达式中, [a-z] 表示匹配一个小写字母, + 可以使前面的表达式匹配多次，因此 [a-z]+ 能够匹配一个及以上小写字母组成的字符串。在正则表达式中一个 . 表示匹配任意字符，而 . 转义后则表示匹配字符 . ，最后的 txt 表示严格匹配 txt 这三个字母。因此这个正则表达式的所要匹配的内容就是文件名为纯小写字母的文本文件。 std::regex_match 用于匹配字符串和正则表达式，有很多不同的重载形式。最简单的一个形式就是传入std::string 以及一个 std::regex 进行匹配，当匹配成功时，会返回 true，否则返回 false。例如：
+
+```c++
+#include <iostream>
+#include <string>
+#include <regex>
+
+int main() {
+    std::string fnames[] = {"foo.txt", "bar.txt", "test", "a0.txt", "AAA.txt"};
+    // 在 C++ 中 `\` 会被作为字符串内的转义符，为使 `\.` 作为正则表达式传递进去生效，需要对 `\` 进行二次转义，从而有 `\\.`
+    std::regex txt_regex("[a-z]+\\.txt");
+    for (const auto &fname: fnames)
+        std::cout << fname << ": " << std::regex_match(fname, txt_regex) << std::endl;
+}
+```
+
+另一种常用的形式就是依次传入 std::string/std::smatch/std::regex 三个参数，其中 std::smatch 的本质其实是 std::match_results，在标准库中， std::smatch 被定义为了 std::match_results，也就是一个子串迭代器类型的 match_results。使用 std::smatch 可以方便的对匹配的结果进行获取，例如：
+
+```c++
+std::regex base_regex("([a-z]+)\\.txt");
+std::smatch base_match;
+for(const auto &fname: fnames) {
+    if (std::regex_match(fname, base_match, base_regex)) {
+        // sub_match 的第一个元素匹配整个字符串
+        // sub_match 的第二个元素匹配了第一个括号表达式
+        if (base_match.size() == 2) {
+            std::string base = base_match[1].str();
+            std::cout << "sub-match[0]: " << base_match[0].str() << std::endl;
+            std::cout << fname << " sub-match[1]: " << base << std::endl;
+        }
+    }
+}
+```
+
+以上两个代码段的输出结果为：
+
+```c++
+foo.txt: 1
+bar.txt: 1
+test: 0
+a0.txt: 0
+AAA.txt: 0
+sub-match[0]: foo.txt
+foo.txt sub-match[1]: foo
+sub-match[0]: bar.txt
+bar.txt sub-match[1]: bar
+```
