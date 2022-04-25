@@ -72,6 +72,10 @@ tuple.count(obj)
 
 ![image-20220413111110321](../img/image-20220413111110321.png)
 
+
+
+
+
 ### 字典常见操作
 
 len(dict)

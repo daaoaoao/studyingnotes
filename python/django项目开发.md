@@ -303,13 +303,13 @@ exprise设置为None表示为永不过期
 
 ## 2. session
 
-##### 2.1 描述
+### 描述
 
 ```
 服务端会话技术，依赖于cookie
 ```
 
-##### 2.2 开启session设置
+### 开启session设置
 
 1）django中启用SESSION
 
@@ -325,7 +325,7 @@ MIDDLEWARE:
 
 每个HttpResponse对象都有一个session属性，也是一个类字典对象
 
-##### 2.3 常用操作
+### 常用操作
 
 ```
 request.session[‘user’] = username 设置数据
