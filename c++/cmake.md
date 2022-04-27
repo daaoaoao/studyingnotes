@@ -46,6 +46,55 @@ CMake语法指定了许多变量，可用于帮助您在项目或源代码树中
 
 另外，这些变量不仅可以在CMakeLists中使用，同样可以在**源代码.cpp**中使用。
 
+
+
+CMake常用变量
+
+- **CMAKE_C_FLAGS  gcc编译选项**
+
+  **CMAKE_CXX_FLAGS  g++编译选项**
+
+  ```
+  # 在CMAKE_CXX_FLAGS编译选项后追加-std=c++11
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  ```
+
+  **CMAKE_BUILD_TYPE  编译类型(Debug, Release)**
+
+  ```
+  # 设定编译类型为debug，调试时需要选择debug
+  set(CMAKE_BUILD_TYPE Debug) 
+  # 设定编译类型为release，发布时需要选择release
+  set(CMAKE_BUILD_TYPE Release) 
+  ```
+
+  **CMAKE_BINARY_DIR**
+
+  **PROJECT_BINARY_DIR**
+
+  **<projectname>__BINARY_DIR**
+
+- 1. 这三个变量指代的内容是一致的。
+  2. 如果是 in source build，指的就是工程顶层目录。
+  3. 如果是 out-of-source 编译,指的是工程编译发生的目录。
+  4. PROJECT_BINARY_DIR 跟其他指令稍有区别，不过现在，你可以理解为他们是一致的。
+
+- **CMAKE_SOURCE_DIR**
+
+  **PROJECT_SOURCE_DIR**
+  **\<projectname>__SOURCE_DIR**
+
+- 1. 这三个变量指代的内容是一致的,不论采用何种编译方式,都是工程顶层目录。
+  2. 也就是在 in source build时,他跟 CMAKE_BINARY_DIR 等变量一致。
+  3. PROJECT_SOURCE_DIR 跟其他指令稍有区别,现在,你可以理解为他们是一致的。
+
+------
+
+- **CMAKE_C_COMPILER：指定C编译器**
+- **CMAKE_CXX_COMPILER：指定C++编译器**
+- **EXECUTABLE_OUTPUT_PATH：可执行文件输出的存放路径**
+- **LIBRARY_OUTPUT_PATH：库文件输出的存放路径**
+
 # 案例
 
 ## 单个源文件
@@ -147,7 +196,58 @@ add_library (MathFunctions ${DIR_LIB_SRCS})
 
 
 
+# 编译流程
 
+**在 linux 平台下使用 CMake 构建C/C++工程的流程如下:**
+
+- 手动编写 CmakeLists.txt。
+- 执行命令 `cmake PATH`生成 Makefile ( PATH 是顶层CMakeLists.txt 所在的目录 )。
+- 执行命令`make` 进行编译。
+
+------
+
+```
+# important tips
+.          # 表示当前目录
+./         # 表示当前目录
+
+..      # 表示上级目录
+../     # 表示上级目录
+```
+
+------
+
+##  两种构建方式
+
+- **内部构建(in-source build)**：不推荐使用
+
+  内部构建会在同级目录下产生一大堆中间文件，这些中间文件并不是我们最终所需要的，和工程源文件放在一起会显得杂乱无章。
+
+  ```
+  ## 内部构建
+  
+  # 在当前目录下，编译本目录的CMakeLists.txt，生成Makefile和其他文件
+  cmake .
+  # 执行make命令，生成target
+  make
+  ```
+
+- **外部构建(out-of-source build)**：==推荐使用==
+
+  将编译输出文件与源文件放到不同目录中
+
+  ```
+   ## 外部构建
+   
+   # 1. 在当前目录下，创建build文件夹
+   mkdir build 
+   # 2. 进入到build文件夹
+   cd build
+   # 3. 编译上级目录的CMakeLists.txt，生成Makefile和其他文件
+   cmake ..
+   # 4. 执行make命令，生成target
+  make
+  ```
 
 
 
