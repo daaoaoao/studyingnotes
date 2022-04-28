@@ -94,3 +94,52 @@ public:
 };
 ```
 
+
+
+
+
+倒数第k大的元素
+
+
+
+
+
+451
+
+按照字符出现次数对字符串排序
+
+```c++
+class Solution {
+public:
+    string frequencySort(string s) {
+        vector<pair<char,int>> v;
+        for(int i = 0; i < s.size(); i++)
+        {
+            int j = 0;
+            for(; j < v.size(); j++)
+            {
+                if(v[j].first == s[i])
+                {
+                    v[j].second++;
+                    break;
+                }
+            }
+            if(j == v.size())
+            {
+                v.push_back(make_pair(s[i],1));
+            }
+        }
+        sort(v.begin(),v.end(),[](pair<char,int> a,pair<char,int> b){return a.second > b.second;});
+        string t;
+        for(int i = 0; i < v.size(); i++)
+        {
+            for(int j = 0; j < v[i].second; j++)
+            {
+                t.push_back(v[i].first);
+            }
+        }
+        return t;
+    }
+};
+```
+
