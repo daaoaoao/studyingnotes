@@ -67,6 +67,18 @@ git push -u origin master   （注：此操作目的是把本地仓库push到git
 
 ```
 
+
+
+比较本地和云端版本信息
+
+git remote -v 查看远程仓库
+
+git fetch origin aaaaa 从远程获取最新版本到本地
+
+比较远程分支和本地分支 git log -p aaa origin/aaa
+
+合并远程分支到本地 git merge origin/aaa
+
 # 同步vs插件
 
 
