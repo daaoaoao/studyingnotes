@@ -1,0 +1,838 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+
+<link href='https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap' rel='stylesheet' type='text/css' /><link href='https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@500&display=swap' rel='stylesheet' type='text/css' /><style type='text/css'>html {overflow-x: initial !important;}:root { --bg-color:#ffffff; --text-color:#333333; --select-text-bg-color:#B5D6FC; --select-text-font-color:auto; --monospace:"Lucida Console",Consolas,"Courier",monospace; --title-bar-height:20px; }
+.mac-os-11 { --title-bar-height:28px; }
+html { font-size: 14px; background-color: var(--bg-color); color: var(--text-color); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+body { margin: 0px; padding: 0px; height: auto; inset: 0px; font-size: 1rem; line-height: 1.42857; overflow-x: hidden; background: inherit; tab-size: 4; }
+iframe { margin: auto; }
+a.url { word-break: break-all; }
+a:active, a:hover { outline: 0px; }
+.in-text-selection, ::selection { text-shadow: none; background: var(--select-text-bg-color); color: var(--select-text-font-color); }
+#write { margin: 0px auto; height: auto; width: inherit; word-break: normal; overflow-wrap: break-word; position: relative; white-space: normal; overflow-x: visible; padding-top: 36px; }
+#write.first-line-indent p { text-indent: 2em; }
+#write.first-line-indent li p, #write.first-line-indent p * { text-indent: 0px; }
+#write.first-line-indent li { margin-left: 2em; }
+.for-image #write { padding-left: 8px; padding-right: 8px; }
+body.typora-export { padding-left: 30px; padding-right: 30px; }
+.typora-export .footnote-line, .typora-export li, .typora-export p { white-space: pre-wrap; }
+.typora-export .task-list-item input { pointer-events: none; }
+@media screen and (max-width: 500px) {
+  body.typora-export { padding-left: 0px; padding-right: 0px; }
+  #write { padding-left: 20px; padding-right: 20px; }
+  .CodeMirror-sizer { margin-left: 0px !important; }
+  .CodeMirror-gutters { display: none !important; }
+}
+#write li > figure:last-child { margin-bottom: 0.5rem; }
+#write ol, #write ul { position: relative; }
+img { max-width: 100%; vertical-align: middle; image-orientation: from-image; }
+button, input, select, textarea { color: inherit; font: inherit; }
+input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px; }
+*, ::after, ::before { box-sizing: border-box; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p, #write pre { width: inherit; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p { position: relative; }
+p { line-height: inherit; }
+h1, h2, h3, h4, h5, h6 { break-after: avoid-page; break-inside: avoid; orphans: 4; }
+p { orphans: 4; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.6rem; }
+h4 { font-size: 1.4rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1rem; }
+.md-math-block, .md-rawblock, h1, h2, h3, h4, h5, h6, p { margin-top: 1rem; margin-bottom: 1rem; }
+.hidden { display: none; }
+.md-blockmeta { color: rgb(204, 204, 204); font-weight: 700; font-style: italic; }
+a { cursor: pointer; }
+sup.md-footnote { padding: 2px 4px; background-color: rgba(238, 238, 238, 0.7); color: rgb(85, 85, 85); border-radius: 4px; cursor: pointer; }
+sup.md-footnote a, sup.md-footnote a:hover { color: inherit; text-transform: inherit; text-decoration: inherit; }
+#write input[type="checkbox"] { cursor: pointer; width: inherit; height: inherit; }
+figure { overflow-x: auto; margin: 1.2em 0px; max-width: calc(100% + 16px); padding: 0px; }
+figure > table { margin: 0px; }
+tr { break-inside: avoid; break-after: auto; }
+thead { display: table-header-group; }
+table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; break-inside: auto; text-align: left; }
+table.md-table td { min-width: 32px; }
+.CodeMirror-gutters { border-right: 0px; background-color: inherit; }
+.CodeMirror-linenumber { user-select: none; }
+.CodeMirror { text-align: left; }
+.CodeMirror-placeholder { opacity: 0.3; }
+.CodeMirror pre { padding: 0px 4px; }
+.CodeMirror-lines { padding: 0px; }
+div.hr:focus { cursor: none; }
+#write pre { white-space: pre-wrap; }
+#write.fences-no-line-wrapping pre { white-space: pre; }
+#write pre.ty-contain-cm { white-space: normal; }
+.CodeMirror-gutters { margin-right: 4px; }
+.md-fences { font-size: 0.9rem; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; background: inherit; position: relative !important; }
+.md-fences-adv-panel { width: 100%; margin-top: 10px; text-align: center; padding-top: 0px; padding-bottom: 8px; overflow-x: auto; }
+#write .md-fences.mock-cm { white-space: pre-wrap; }
+.md-fences.md-fences-with-lineno { padding-left: 0px; }
+#write.fences-no-line-wrapping .md-fences.mock-cm { white-space: pre; overflow-x: auto; }
+.md-fences.mock-cm.md-fences-with-lineno { padding-left: 8px; }
+.CodeMirror-line, twitterwidget { break-inside: avoid; }
+.footnotes { opacity: 0.8; font-size: 0.9rem; margin-top: 1em; margin-bottom: 1em; }
+.footnotes + .footnotes { margin-top: 0px; }
+.md-reset { margin: 0px; padding: 0px; border: 0px; outline: 0px; vertical-align: top; background: 0px 0px; text-decoration: none; text-shadow: none; float: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; -webkit-tap-highlight-color: transparent; line-height: normal; font-weight: 400; text-align: left; box-sizing: content-box; direction: ltr; }
+li div { padding-top: 0px; }
+blockquote { margin: 1rem 0px; }
+li .mathjax-block, li p { margin: 0.5rem 0px; }
+li blockquote { margin: 1rem 0px; }
+li { margin: 0px; position: relative; }
+blockquote > :last-child { margin-bottom: 0px; }
+blockquote > :first-child, li > :first-child { margin-top: 0px; }
+.footnotes-area { color: rgb(136, 136, 136); margin-top: 0.714rem; padding-bottom: 0.143rem; white-space: normal; }
+#write .footnote-line { white-space: pre-wrap; }
+@media print {
+  body, html { border: 1px solid transparent; height: 99%; break-after: avoid; break-before: avoid; font-variant-ligatures: no-common-ligatures; }
+  #write { margin-top: 0px; padding-top: 0px; border-color: transparent !important; }
+  .typora-export * { -webkit-print-color-adjust: exact; }
+  .typora-export #write { break-after: avoid; }
+  .typora-export #write::after { height: 0px; }
+  .is-mac table { break-inside: avoid; }
+  .typora-export-show-outline .typora-export-sidebar { display: none; }
+}
+.footnote-line { margin-top: 0.714em; font-size: 0.7em; }
+a img, img a { cursor: pointer; }
+pre.md-meta-block { font-size: 0.8rem; min-height: 0.8rem; white-space: pre-wrap; background: rgb(204, 204, 204); display: block; overflow-x: hidden; }
+p > .md-image:only-child:not(.md-img-error) img, p > img:only-child { display: block; margin: auto; }
+#write.first-line-indent p > .md-image:only-child:not(.md-img-error) img { left: -2em; position: relative; }
+p > .md-image:only-child { display: inline-block; width: 100%; }
+#write .MathJax_Display { margin: 0.8em 0px 0px; }
+.md-math-block { width: 100%; }
+.md-math-block:not(:empty)::after { display: none; }
+.MathJax_ref { fill: currentcolor; }
+[contenteditable="true"]:active, [contenteditable="true"]:focus, [contenteditable="false"]:active, [contenteditable="false"]:focus { outline: 0px; box-shadow: none; }
+.md-task-list-item { position: relative; list-style-type: none; }
+.task-list-item.md-task-list-item { padding-left: 0px; }
+.md-task-list-item > input { position: absolute; top: 0px; left: 0px; margin-left: -1.2em; margin-top: calc(1em - 10px); border: none; }
+.math { font-size: 1rem; }
+.md-toc { min-height: 3.58rem; position: relative; font-size: 0.9rem; border-radius: 10px; }
+.md-toc-content { position: relative; margin-left: 0px; }
+.md-toc-content::after, .md-toc::after { display: none; }
+.md-toc-item { display: block; color: rgb(65, 131, 196); }
+.md-toc-item a { text-decoration: none; }
+.md-toc-inner:hover { text-decoration: underline; }
+.md-toc-inner { display: inline-block; cursor: pointer; }
+.md-toc-h1 .md-toc-inner { margin-left: 0px; font-weight: 700; }
+.md-toc-h2 .md-toc-inner { margin-left: 2em; }
+.md-toc-h3 .md-toc-inner { margin-left: 4em; }
+.md-toc-h4 .md-toc-inner { margin-left: 6em; }
+.md-toc-h5 .md-toc-inner { margin-left: 8em; }
+.md-toc-h6 .md-toc-inner { margin-left: 10em; }
+@media screen and (max-width: 48em) {
+  .md-toc-h3 .md-toc-inner { margin-left: 3.5em; }
+  .md-toc-h4 .md-toc-inner { margin-left: 5em; }
+  .md-toc-h5 .md-toc-inner { margin-left: 6.5em; }
+  .md-toc-h6 .md-toc-inner { margin-left: 8em; }
+}
+a.md-toc-inner { font-size: inherit; font-style: inherit; font-weight: inherit; line-height: inherit; }
+.footnote-line a:not(.reversefootnote) { color: inherit; }
+.md-attr { display: none; }
+.md-fn-count::after { content: "."; }
+code, pre, samp, tt { font-family: var(--monospace); }
+kbd { margin: 0px 0.1em; padding: 0.1em 0.6em; font-size: 0.8em; color: rgb(36, 39, 41); background: rgb(255, 255, 255); border: 1px solid rgb(173, 179, 185); border-radius: 3px; box-shadow: rgba(12, 13, 14, 0.2) 0px 1px 0px, rgb(255, 255, 255) 0px 0px 0px 2px inset; white-space: nowrap; vertical-align: middle; }
+.md-comment { color: rgb(162, 127, 3); opacity: 0.6; font-family: var(--monospace); }
+code { text-align: left; vertical-align: initial; }
+a.md-print-anchor { white-space: pre !important; border-width: initial !important; border-style: none !important; border-color: initial !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: 0px !important; background: 0px 0px !important; text-decoration: initial !important; text-shadow: initial !important; }
+.os-windows.monocolor-emoji .md-emoji { font-family: "Segoe UI Symbol", sans-serif; }
+.md-diagram-panel > svg { max-width: 100%; }
+[lang="flow"] svg, [lang="mermaid"] svg { max-width: 100%; height: auto; }
+[lang="mermaid"] .node text { font-size: 1rem; }
+table tr th { border-bottom: 0px; }
+video { max-width: 100%; display: block; margin: 0px auto; }
+iframe { max-width: 100%; width: 100%; border: none; }
+.highlight td, .highlight tr { border: 0px; }
+mark { background: rgb(255, 255, 0); color: rgb(0, 0, 0); }
+.md-html-inline .md-plain, .md-html-inline strong, mark .md-inline-math, mark strong { color: inherit; }
+.md-expand mark .md-meta { opacity: 0.3 !important; }
+mark .md-meta { color: rgb(0, 0, 0); }
+@media print {
+  .typora-export h1, .typora-export h2, .typora-export h3, .typora-export h4, .typora-export h5, .typora-export h6 { break-inside: avoid; }
+}
+.md-diagram-panel .messageText { stroke: none !important; }
+.md-diagram-panel .start-state { fill: var(--node-fill); }
+.md-diagram-panel .edgeLabel rect { opacity: 1 !important; }
+.md-fences.md-fences-math { font-size: 1em; }
+.md-fences-advanced:not(.md-focus) { padding: 0px; white-space: nowrap; border: 0px; }
+.md-fences-advanced:not(.md-focus) { background: inherit; }
+.typora-export-show-outline .typora-export-content { max-width: 1440px; margin: auto; display: flex; flex-direction: row; }
+.typora-export-sidebar { width: 300px; font-size: 0.8rem; margin-top: 80px; margin-right: 18px; }
+.typora-export-show-outline #write { --webkit-flex:2; flex: 2 1 0%; }
+.typora-export-sidebar .outline-content { position: fixed; top: 0px; max-height: 100%; overflow: hidden auto; padding-bottom: 30px; padding-top: 60px; width: 300px; }
+@media screen and (max-width: 1024px) {
+  .typora-export-sidebar, .typora-export-sidebar .outline-content { width: 240px; }
+}
+@media screen and (max-width: 800px) {
+  .typora-export-sidebar { display: none; }
+}
+.outline-content li, .outline-content ul { margin-left: 0px; margin-right: 0px; padding-left: 0px; padding-right: 0px; list-style: none; }
+.outline-content ul { margin-top: 0px; margin-bottom: 0px; }
+.outline-content strong { font-weight: 400; }
+.outline-expander { width: 1rem; height: 1.42857rem; position: relative; display: table-cell; vertical-align: middle; cursor: pointer; padding-left: 4px; }
+.outline-expander::before { content: ""; position: relative; font-family: Ionicons; display: inline-block; font-size: 8px; vertical-align: middle; }
+.outline-item { padding-top: 3px; padding-bottom: 3px; cursor: pointer; }
+.outline-expander:hover::before { content: ""; }
+.outline-h1 > .outline-item { padding-left: 0px; }
+.outline-h2 > .outline-item { padding-left: 1em; }
+.outline-h3 > .outline-item { padding-left: 2em; }
+.outline-h4 > .outline-item { padding-left: 3em; }
+.outline-h5 > .outline-item { padding-left: 4em; }
+.outline-h6 > .outline-item { padding-left: 5em; }
+.outline-label { cursor: pointer; display: table-cell; vertical-align: middle; text-decoration: none; color: inherit; }
+.outline-label:hover { text-decoration: underline; }
+.outline-item:hover { border-color: rgb(245, 245, 245); background-color: var(--item-hover-bg-color); }
+.outline-item:hover { margin-left: -28px; margin-right: -28px; border-left: 28px solid transparent; border-right: 28px solid transparent; }
+.outline-item-single .outline-expander::before, .outline-item-single .outline-expander:hover::before { display: none; }
+.outline-item-open > .outline-item > .outline-expander::before { content: ""; }
+.outline-children { display: none; }
+.info-panel-tab-wrapper { display: none; }
+.outline-item-open > .outline-children { display: block; }
+.typora-export .outline-item { padding-top: 1px; padding-bottom: 1px; }
+.typora-export .outline-item:hover { margin-right: -8px; border-right: 8px solid transparent; }
+.typora-export .outline-expander::before { content: "+"; font-family: inherit; top: -1px; }
+.typora-export .outline-expander:hover::before, .typora-export .outline-item-open > .outline-item > .outline-expander::before { content: "−"; }
+.typora-export-collapse-outline .outline-children { display: none; }
+.typora-export-collapse-outline .outline-item-open > .outline-children, .typora-export-no-collapse-outline .outline-children { display: block; }
+.typora-export-no-collapse-outline .outline-expander::before { content: "" !important; }
+.typora-export-show-outline .outline-item-active > .outline-item .outline-label { font-weight: 700; }
+.md-inline-math-container mjx-container { zoom: 0.95; }
+
+
+/*
+fonts initalization
+*/
+@import url(https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@500&display=swap);
+@page {
+	size: A4;
+	margin: 8mm 0mm;
+}
+
+/*
+root variables including colors, font-familys and a shadow style
+*/
+:root {
+	--h-border-color: rgb(255, 191, 191);
+	--h-bg-color: rgb(255, 232, 232);
+	--table-border-color: rgb(255, 235, 211);
+	--th-bg-color: rgb(255, 243, 228);
+	--tr-bg-color: rgb(255, 249, 242);
+	--tr-hover-bg-color: rgb(254, 255, 230);
+	--code-bg-color: rgb(247, 247, 247);
+	--del-color: rgb(151, 151, 151);
+	--selection-bg-color: rgb(235, 227, 255);
+	--block-shadow: 0.15rem 0.15rem 0.5rem rgb(150, 150, 150);
+	--sans-serif-font: "Noto Sans SC Medium", "Noto Sans SC", sans-serif;
+	--monospace-font: "Source Code Pro Regular", "Source Code Pro", monospace;
+}
+
+html {
+	font-size: 16px;
+}
+
+
+#write {
+	font-family: var(--sans-serif-font);
+	max-width: 60rem;
+	padding-left: 2rem;
+	padding-right: 2rem;
+}
+
+/*
+yaml header settings
+*/
+#write pre.md-meta-block {
+	font-family: var(--monospace-font);
+	font-size: 1rem;
+	text-align: left;
+	padding: 0.6rem;
+	color: rgb(134, 134, 134);
+	background-color: var(--code-bg-color);
+	border-radius: 0.4rem;
+}
+
+/*
+headers settings
+*/
+#write h1 {
+	font-size: 2.2rem;
+	text-align: center;
+	text-shadow: 0.15rem 0.15rem 0.3rem rgb(187, 187, 187);
+}
+#write h2 {
+	font-size: 1.8rem;
+	margin-top: 1.8rem;
+	margin-left: -1.5rem;
+	margin-right: -1.5rem;
+	background-color: var(--h-bg-color);
+	padding-left: 1rem;
+	padding-right: 1rem;
+	border-left: 0.5rem solid var(--h-border-color);
+	border-radius: 0.4rem;
+}
+#write h3 {
+	font-size: 1.6rem;
+	text-decoration: underline double var(--h-border-color) 0.15rem;
+}
+#write h4 {
+	text-decoration: underline dotted var(--h-border-color) 0.2rem;
+}
+
+/*
+tables settings
+*/
+#write table {
+	border-collapse: collapse;
+	border: 0.25rem solid var(--table-border-color);
+}
+#write table th {
+	background-color: var(--th-bg-color);
+}
+#write table th, td {
+	text-align: center;
+	border: 0.13rem dashed var(--table-border-color);
+	padding: 0.5rem;
+}
+#write table tr:nth-child(even) {
+	background-color: var(--tr-bg-color);
+}
+#write table tr:hover {
+	background-color: var(--tr-hover-bg-color);
+}
+
+/*
+checkboxes settings
+*/
+#write .task-list-item input[type = "checkbox"] {
+	width: 0;
+	height: 0;
+}
+#write .task-list-item input[type = "checkbox"]::before, #write input[type = "checkbox"]:checked::before {
+	content: "";
+	display: inline-block;
+	vertical-align: middle;
+	position: relative;
+	left: -0.15rem;
+	top: -0.41rem;
+	width: 0.8rem;
+	height: 0.8rem;
+	border: 0.08rem solid var(--del-color);
+	border-radius: 50%;
+	transition: all 0.2s;
+}
+#write .task-list-item input[type = "checkbox"]:checked::before {
+	padding: 0.12rem;
+	background-clip: content-box;
+	background-color: black;
+}
+#write .task-list-item input[type = "checkbox"]:checked + p {
+	text-decoration: line-through;
+	color: var(--del-color);
+}
+#write input[type='checkbox']:hover::before {
+	transition: all 0.2s;
+	background-color: rgb(228, 228, 228);
+}
+
+/*
+blockquotes settings
+*/
+#write blockquote {
+	color:rgb(102, 102, 102);
+	border-left: 0.25rem solid rgb(169, 202, 255);
+	padding: 0.5rem 1rem 0.6rem 1rem;
+}
+#write blockquote::before {
+	display: block;
+	height: 2rem;
+	width: 1.5rem;
+	content: "🌈";
+	font-size: 1.2rem;
+}
+
+/*
+horizontal rules settings
+*/
+#write hr {
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+	background-color: rgb(226, 226, 226);
+	height: 0.13rem;
+	border: 0;
+}
+
+#write p {
+	font-size: 1rem;
+	line-height: 1.6rem;
+}
+
+/*
+code blocks settings
+*/
+#write .md-fences {
+	font-family: var(--monospace-font);
+	font-size: 1rem;
+	padding: 0.6rem;
+	background-color: var(--code-bg-color);
+	border-radius: 0.4rem;
+	box-shadow: var(--block-shadow);
+}
+#write .cm-s-inner .CodeMirror-gutters {
+	border: none;
+}
+#write .cm-s-inner .CodeMirror-linenumber {
+	color: rgb(212, 212, 212);
+}
+#write .cm-s-inner .cm-keyword {
+	color: rgb(204, 35, 35);
+}
+#write .cm-s-inner .cm-number {
+	color: rgb(27, 57, 226);
+}
+#write .cm-s-inner .cm-def {
+	color: rgb(146, 50, 255);
+}
+#write .cm-s-inner .cm-operator {
+	color: rgb(204, 35, 35);
+}
+#write .cm-s-inner .cm-variable2 {
+	color: rgb(38, 129, 219);
+}
+#write .cm-s-inner .cm-variable3 {
+	color: rgb(204, 35, 35);
+}
+#write .cm-s-inner .cm-comment {
+	color: rgb(18, 129, 18);
+}
+#write .cm-s-inner .cm-string {
+	color: rgb(18, 129, 18);
+}
+#write .cm-s-inner .cm-builtin {
+	color: rgb(218, 135, 12);
+}
+#write .cm-tag {
+	color: rgb(139, 10, 10);
+}
+
+/*
+formulas settings
+*/
+#write mjx-container {
+	font-size: 1.1rem;
+}
+
+/*
+tooltips settings
+*/
+#write .code-tooltip {
+	box-shadow: 0.1rem 0.1rem 0.2rem rgb(150, 150, 150);
+	border-radius: 0.2rem;
+	margin-top: 0.3rem;
+}
+
+/*
+selected texts in code blocks settings
+*/
+#write .CodeMirror-selected, #write .CodeMirror-selectedtext, #write .in-text-selection {
+	background-color: var(--selection-bg-color) !important;
+}
+
+/*
+diagrams settings
+*/
+#write pre[lang=’sequence’], #write pre[lang=’flow’], #write pre[lang=’mermaid’] {
+	background-color: var(--code-bg-color);
+	border-radius: 0.4rem;
+	box-shadow: var(--block-shadow);
+}
+
+/*
+inline codes settings
+*/
+#write code {
+	font-family: var(--monospace-font);
+	margin-left: 0.25rem;
+	margin-right: 0.25rem;
+	padding: 0.05rem 0.3rem;
+	background-color: var(--code-bg-color);
+	border-radius: 0.4rem;
+	box-shadow: 0.13rem 0.13rem 0.26rem rgb(197, 197, 197);
+}
+
+/*
+urls settings
+*/
+#write a {
+	color: rgb(31, 117, 255);
+}
+#write a:hover {
+	color: rgb(108, 164, 255);
+}
+
+/*
+images settings
+*/
+#write img {
+	display: block;
+	margin: 0 auto;
+	border: 0;
+	border-radius: 5px;
+	box-shadow: var(--block-shadow);
+}
+
+/*
+highlights settings
+*/
+#write mark {
+	background-color: rgb(252, 255, 200);
+}
+
+/*
+deletes settings
+*/
+#write del {
+	color: var(--del-color);
+}
+
+/*
+selected texts settings
+*/
+#write ::selection {
+	background-color: var(--selection-bg-color);
+}
+/** initialize css counter */
+#write {
+    counter-reset: h1
+}
+
+h1 {
+    counter-reset: h2
+}
+
+h2 {
+    counter-reset: h3
+}
+
+h3 {
+    counter-reset: h4
+}
+
+h4 {
+    counter-reset: h5
+}
+
+h5 {
+    counter-reset: h6
+}
+
+/** put counter result into headings */
+#write h1:before {
+    counter-increment: h1;
+    content: counter(h1) ". "
+}
+
+#write h2:before {
+    counter-increment: h2;
+    content: counter(h1) "." counter(h2) ". "
+}
+
+#write h3:before,
+h3.md-focus.md-heading:before /** override the default style for focused headings */ {
+    counter-increment: h3;
+    content: counter(h1) "." counter(h2) "." counter(h3) ". "
+}
+
+#write h4:before,
+h4.md-focus.md-heading:before {
+    counter-increment: h4;
+    content: counter(h1) "." counter(h2) "." counter(h3) "." counter(h4) ". "
+}
+
+#write h5:before,
+h5.md-focus.md-heading:before {
+    counter-increment: h5;
+    content: counter(h1) "." counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) ". "
+}
+
+#write h6:before,
+h6.md-focus.md-heading:before {
+    counter-increment: h6;
+    content: counter(h1) "." counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) "." counter(h6) ". "
+}
+
+/** override the default style for focused headings */
+#write>h3.md-focus:before,
+#write>h4.md-focus:before,
+#write>h5.md-focus:before,
+#write>h6.md-focus:before,
+h3.md-focus:before,
+h4.md-focus:before,
+h5.md-focus:before,
+h6.md-focus:before {
+    color: inherit;
+    border: inherit;
+    border-radius: inherit;
+    position: inherit;
+    left:initial;
+    float: none;
+    top:initial;
+    font-size: inherit;
+    padding-left: inherit;
+    padding-right: inherit;
+    vertical-align: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+}
+/**************************************
+ * Header Counters in TOC
+ **************************************/
+
+/* No link underlines in TOC */
+.md-toc-inner {
+    text-decoration: none;
+}
+
+.md-toc-content {
+    counter-reset: h1toc
+}
+
+.md-toc-h1 {
+    margin-left: 0;
+    font-size: 1.5rem;
+    counter-reset: h2toc
+}
+
+.md-toc-h2 {
+    font-size: 1.1rem;
+    margin-left: 2rem;
+    counter-reset: h3toc
+}
+
+.md-toc-h3 {
+    margin-left: 3rem;
+    font-size: .9rem;
+    counter-reset: h4toc
+}
+
+.md-toc-h4 {
+    margin-left: 4rem;
+    font-size: .85rem;
+    counter-reset: h5toc
+}
+
+.md-toc-h5 {
+    margin-left: 5rem;
+    font-size: .8rem;
+    counter-reset: h6toc
+}
+
+.md-toc-h6 {
+    margin-left: 6rem;
+    font-size: .75rem;
+}
+
+.md-toc-h1:before {
+    color: black;
+    counter-increment: h1toc;
+    content: counter(h1toc) ". "
+}
+
+.md-toc-h1 .md-toc-inner {
+    margin-left: 0;
+}
+
+.md-toc-h2:before {
+    color: black;
+    counter-increment: h2toc;
+    content: counter(h1toc) ". " counter(h2toc) ". "
+}
+
+.md-toc-h2 .md-toc-inner {
+    margin-left: 0;
+}
+
+.md-toc-h3:before {
+    color: black;
+    counter-increment: h3toc;
+    content: counter(h1toc) ". " counter(h2toc) ". " counter(h3toc) ". "
+}
+
+.md-toc-h3 .md-toc-inner {
+    margin-left: 0;
+}
+
+.md-toc-h4:before {
+    color: black;
+    counter-increment: h4toc;
+    content: counter(h1toc) ". " counter(h2toc) ". " counter(h3toc) ". " counter(h4toc) ". "
+}
+
+.md-toc-h4 .md-toc-inner {
+    margin-left: 0;
+}
+
+.md-toc-h5:before {
+    color: black;
+    counter-increment: h5toc;
+    content: counter(h1toc) ". " counter(h2toc) ". " counter(h3toc) ". " counter(h4toc) ". " counter(h5toc) ". "
+}
+
+.md-toc-h5 .md-toc-inner {
+    margin-left: 0;
+}
+
+.md-toc-h6:before {
+    color: black;
+    counter-increment: h6toc;
+    content: counter(h1toc) ". " counter(h2toc) ". " counter(h3toc) ". " counter(h4toc) ". " counter(h5toc) ". " counter(h6toc) ". "
+}
+
+.md-toc-h6 .md-toc-inner {
+    margin-left: 0;
+}
+
+/**************************************
+ * Header Counters in Content
+ **************************************/
+
+/** initialize css counter */
+#write {
+    counter-reset: h1
+}
+
+h1 {
+    counter-reset: h2
+}
+
+h2 {
+    counter-reset: h3
+}
+
+h3 {
+    counter-reset: h4
+}
+
+h4 {
+    counter-reset: h5
+}
+
+h5 {
+    counter-reset: h6
+}
+
+/** put counter result into headings */
+#write h1:before {
+    counter-increment: h1;
+    content: counter(h1) ". "
+}
+
+#write h2:before {
+    counter-increment: h2;
+    content: counter(h1) "." counter(h2) ". "
+}
+
+#write h3:before, h3.md-focus.md-heading:before { /*override the default style for focused headings */
+    counter-increment: h3;
+    content: counter(h1) "." counter(h2) "." counter(h3) ". "
+}
+
+#write h4:before, h4.md-focus.md-heading:before {
+    counter-increment: h4;
+    content: counter(h1) "." counter(h2) "." counter(h3) "." counter(h4) ". "
+}
+
+#write h5:before, h5.md-focus.md-heading:before {
+    counter-increment: h5;
+    content: counter(h1) "." counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) ". "
+}
+
+#write h6:before, h6.md-focus.md-heading:before {
+    counter-increment: h6;
+    content: counter(h1) "." counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) "." counter(h6) ". "
+}
+
+/** override the default style for focused headings */
+#write>h3.md-focus:before, #write>h4.md-focus:before, #write>h5.md-focus:before, #write>h6.md-focus:before, h3.md-focus:before, h4.md-focus:before, h5.md-focus:before, h6.md-focus:before {
+    color: inherit;
+    border: inherit;
+    border-radius: inherit;
+    position: inherit;
+    left: initial;
+    float: none;
+    top: initial;
+    font-size: inherit;
+    padding-left: inherit;
+    padding-right: inherit;
+    vertical-align: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+}
+.sidebar-content {
+    counter-reset: h1
+}
+
+.outline-h1 {
+    counter-reset: h2
+}
+
+.outline-h2 {
+    counter-reset: h3
+}
+
+.outline-h3 {
+    counter-reset: h4
+}
+
+.outline-h4 {
+    counter-reset: h5
+}
+
+.outline-h5 {
+    counter-reset: h6
+}
+
+.outline-h1>.outline-item>.outline-label:before {
+    counter-increment: h1;
+    content: counter(h1) ". "
+}
+
+.outline-h2>.outline-item>.outline-label:before {
+    counter-increment: h2;
+    content: counter(h1) "." counter(h2) ". "
+}
+
+.outline-h3>.outline-item>.outline-label:before {
+    counter-increment: h3;
+    content: counter(h1) "." counter(h2) "." counter(h3) ". "
+}
+
+.outline-h4>.outline-item>.outline-label:before {
+    counter-increment: h4;
+    content: counter(h1) "." counter(h2) "." counter(h3) "." counter(h4) ". "
+}
+
+.outline-h5>.outline-item>.outline-label:before {
+    counter-increment: h5;
+    content: counter(h1) "." counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) ". "
+}
+
+.outline-h6>.outline-item>.outline-label:before {
+    counter-increment: h6;
+    content: counter(h1) "." counter(h2) "." counter(h3) "." counter(h4) "." counter(h5) "." counter(h6) ". "
+}
+
+</style><title>principles of computer composition</title>
+</head>
+<body class='typora-export os-windows'><div class='typora-export-content'>
+<div id='write'  class=''><h1 id='基本组成'><span>基本组成</span></h1><p><span>源程序到可执行文件</span></p><p><span>IR指令寄存器</span></p><p><span>CU控制单元</span></p><p><span>MAR 地址寄存器 存放访存地址 用于寻址 位数对于存储单元的个数 长度与PC长度相等</span></p><p><span>MDR 数据寄存器 暂存要从存储器中读或写的信息 位数与存储字长相等</span></p><p>&nbsp;</p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/执行流程.png" referrerpolicy="no-referrer" alt="执行流程.png (702×370) (jsdelivr.net)"></p><p>&nbsp;</p><p>&nbsp;</p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/执行流程.png" referrerpolicy="no-referrer" alt="执行流程"></p><p>&nbsp;</p><p>&nbsp;</p><p><span>指令和数据以同等地位存放在存储器里面，形式上无差别，只是在程序执行时具有不同的含义</span></p><p><span>指令按地址访问，数据由指令的地址码指出，除立即寻址外，数据均存在存储器内</span></p><p><span>在程序执行前，指令和数据需要预先存放在存储器中，中央处理器可以从存储器存取代码</span></p><p><span>计算机多层结构中，上下层是可以分割的，且上层是下层的实现功能实现，上层在下层的基础上实现了更加丰富的功能</span></p><p><span>编译程序是先完整的编译后运行程序，eg c ,c++ 解释程序是一句一句翻译且边翻译边执行的程序 如 js,python</span></p><p><span>犹豫解释程序要边翻译成机器语言边执行，一般速度较编译程序慢</span></p><p>&nbsp;</p><p><span>多处理机的工作方式是多指令多数据流方式</span></p><p><span>冯诺依曼计算机基本工作方式是控制流驱动方式  本质特征是  存储程序原理</span></p><p><span>地址译码器是主存的构成部分</span></p><p><span>层次化，模块化，规则性</span></p><p>&nbsp;</p><p><span>指令和数据都是保存在存储器中的</span></p><p>&nbsp;</p><p><span>存储器基本组成</span></p><p><span>主存储器{存储体，MAR，MAR}</span></p><p><span>MAR 存储器地址寄存器（反应存储单元的个数）</span></p><p><span>MDR 存储器数据寄存器（反映存储字长）</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/运算器基本组成.png" referrerpolicy="no-referrer" alt="运算器"></p><p><span>存储体-存储单元-存储元件</span></p><p>&nbsp;</p><p><strong><span>存储单元</span></strong><span> 存放一串二进制代码</span></p><p><strong><span>存储字</span></strong><span> 存储单元中的二进制代码组合</span></p><p><strong><span>存储字长</span></strong><span> 存储单元中二进制的位数</span></p><p>&nbsp;</p><p><span>控制器功能：解释指令，保证指令按序执行</span></p><p>&nbsp;</p><p><span>控制器基本组成 CU（执行指令） PC（取指令） IR （分析指令）</span></p><p><span>取数流程</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/取数流程.png" referrerpolicy="no-referrer" alt="取数流程"></p><p><span>存数流程</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/存数流程.png" referrerpolicy="no-referrer" alt="存数流程"></p><p>&nbsp;</p><p><span>机器字长 CPU一次能处理数据的位数与CPU中的寄存器位数有关</span></p><p>&nbsp;</p><p><span>运算速度 </span></p><p><span>主频 核数（每个核支持的线程数） 吉普森算法</span></p><p><span>CPI 执行一条指令所需要的时钟周期数</span></p><p><span>MIPS 每秒执行百万条指令</span></p><p><span>FLOPS 每秒浮点运算次数</span></p><p>&nbsp;</p><p><span>存储容量 存放二进制信息的总位数</span></p><p>&nbsp;</p><p><span>存储容量</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/20220711165820.png" referrerpolicy="no-referrer" alt="存储容量"></p><h2 id='电脑发展'><span>电脑发展</span></h2><p>&nbsp;</p><h1 id='第二章'><span>第二章</span></h1><h2 id='字符'><span>字符</span></h2><h3 id='进制'><span>进制</span></h3><p><span>十进制到任意进制 </span></p><p><span>整数部分 除基取余法</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/除基取余法.png" referrerpolicy="no-referrer"></p><p>&nbsp;</p><p><span>乘基取整法（小数）</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/乘基取整法.png" referrerpolicy="no-referrer"></p><p>&nbsp;</p><h2 id='字符与字符串'><span>字符与字符串</span></h2><p><span>ASCII码</span></p><ul><li><span>32~126位称为可印刷字符</span></li><li><span>A-Z，a-z是连续的，但是Z和a之间不连续</span></li><li><span>以字节的形式存储</span></li></ul><blockquote><p><span>例：已知&#39;A&#39;的ASCII码码值是65，H存放在某存储单元M中，求M中存放的值</span></p><p><span>65+(8-1)=72</span></p><p><span>72 = 0100 1000</span></p></blockquote><p><span>字符串</span></p><p><span>字符串：IF_ _A&gt;B THEN READ(C) ，每个存储单元存放4B</span></p><p><strong><span>大端模式</span></strong><span>：存储单元内</span><strong><span>先存储高位字节</span></strong><span>、</span><strong><span>后存储低位字节</span></strong><span>的顺序</span></p><figure><table><thead><tr><th>&nbsp;</th><th>&nbsp;</th><th>&nbsp;</th><th>&nbsp;</th></tr></thead><tbody><tr><td><span>I</span></td><td><span>F</span></td><td><span>空格</span></td><td><span>A</span></td></tr><tr><td><span>&gt;</span></td><td><span>B</span></td><td><span>空格</span></td><td><span>T</span></td></tr><tr><td><span>H</span></td><td><span>E</span></td><td><span>N</span></td><td><span>空格</span></td></tr><tr><td><span>R</span></td><td><span>E</span></td><td><span>A</span></td><td><span>D</span></td></tr><tr><td><span>(</span></td><td><span>C</span></td><td><span>)</span></td><td><span>空格</span></td></tr></tbody></table></figure><p><strong><span>小端模式</span></strong><span>：存储单元内</span><strong><span>先存储低位字节</span></strong><span>、</span><strong><span>后存储高位字节</span></strong><span>的顺序</span></p><figure><table><thead><tr><th>&nbsp;</th><th>&nbsp;</th><th>&nbsp;</th><th>&nbsp;</th></tr></thead><tbody><tr><td><span>A</span></td><td><span>空格</span></td><td><span>F</span></td><td><span>I</span></td></tr><tr><td><span>T</span></td><td><span>空格</span></td><td><span>B</span></td><td><span>&gt;</span></td></tr><tr><td><span>空格</span></td><td><span>N</span></td><td><span>E</span></td><td><span>H</span></td></tr><tr><td><span>D</span></td><td><span>A</span></td><td><span>E</span></td><td><span>R</span></td></tr><tr><td><span>空格</span></td><td><span>)</span></td><td><span>C</span></td><td><span>(</span></td></tr></tbody></table></figure><h3 id='汉字编码'><span>汉字编码</span></h3><p><span>包括输入的</span><strong><span>输入编码</span></strong><span>，计算机内部处理的</span><strong><span>汉字内码</span></strong><span>和输出的</span><strong><span>汉字字形码</span></strong><span>三种。</span></p><p>&nbsp;</p><h3 id='校验码'><span>校验码</span></h3><p><strong><span>码距</span></strong><span>：任意两个合法码字之间不同的二进制的位数。</span></p><ul><li><span>码距大于等于2时，开始具有检错能力</span></li><li><span>码距越大，纠错、检错能力越强</span></li></ul><h3 id='奇偶校验码'><span>奇偶校验码</span></h3><p><span>添加一个校验位，校验位的取值满足以下规定：</span></p><p><strong><span>奇校验码</span></strong><span>：整个校验码（有效信息位和校验位）中“1”的个数为奇数。</span></p><p><strong><span>偶校验码</span></strong><span>：整个校验码（有效信息位和校验位）中“1”的个数为偶数。</span></p><p><span>即在有效信息的前面添加1或者0即可。</span></p><h3 id='海明校验码'><span>海明校验码</span></h3><ul><li><span>若信息位的位数为n，海明码的位数为k ，则有：</span></li></ul><p><span>(1)2k≥n+k+1</span></p><ul><li><span>将校验位依次放在位于2i−1位上，并将信息位按照顺序填入剩下的位置</span></li><li><span>海明码的取值相当于将各数据位的第i组的所有位求异或</span></li><li><span>每个校验组分别用校验位和参与计算校验位的信息位进行奇偶校验，并得到响应结果。</span></li></ul><p><span>例：求1010的海明码</span></p><p><strong><span>确定位数</span></strong></p><p><span>因为 n=4，则由（1）计算得 k=3</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/海明码.png" referrerpolicy="no-referrer"></p><p><strong><span>确定校验位的分布</span></strong></p><ul><li><span>将校验码放在2i−1位置上</span></li></ul><figure><table><thead><tr><th><span>H7</span></th><th><span>H6</span></th><th><span>H5</span></th><th><span>H4</span></th><th><span>H3</span></th><th><span>H2</span></th><th><span>H1</span></th></tr></thead><tbody><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td><span>P3</span></td><td>&nbsp;</td><td><span>P2</span></td><td><span>P1</span></td></tr></tbody></table></figure><ul><li><span>将信息位填入剩下的位置</span></li></ul><p>&nbsp;</p><figure><table><thead><tr><th><span>H7</span></th><th><span>H6</span></th><th><span>H5</span></th><th><span>H4</span></th><th><span>H3</span></th><th><span>H2</span></th><th><span>H1</span></th></tr></thead><tbody><tr><td><span>D4</span></td><td><span>D3</span></td><td><span>D2</span></td><td><span>P3</span></td><td><span>D1</span></td><td><span>P2</span></td><td><span>P1</span></td></tr><tr><td><span>1</span></td><td><span>0</span></td><td><span>1</span></td><td>&nbsp;</td><td><span>0</span></td><td>&nbsp;</td><td>&nbsp;</td></tr></tbody></table></figure><p>&nbsp;</p><p><span>求校验位的值</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/海明码校验.png" referrerpolicy="no-referrer"></p><p>&nbsp;</p><p><span>纠错</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/海明纠错.png" referrerpolicy="no-referrer"></p><p>&nbsp;</p><p><strong><span>循环冗余校验</span></strong></p><p>&nbsp;</p><p>&nbsp;</p><h2 id='定点数和有符号数'><span>定点数和有符号数</span></h2><p><span>无符号</span></p><p><span>有符号数</span></p><p><span>原码</span></p><p><span>最高位表示符号位</span></p><p>&nbsp;</p><p><span>补码</span></p><ul><li><p><span>正数的补码：补码与原码相同</span></p></li><li><p><span>负数的补码：原码符号位不变，数值位取反，末位加1</span></p></li><li><p><span>当一个正数和一个负数互为补数时，他们的绝对值之和称为</span></p><p><span>模数，类似于时钟，+2 = -10，12为模数</span></p></li></ul><p><span>反码</span></p><p><span>正数的反码：反码与原码相同</span>
+<span>负数的反码：原码符号位不变，数值位取反</span></p><p><span>移码</span></p><p><span>在真值X上加上一个常数（偏置值）</span></p><ul><li><p><span>同一个数，补码和移码</span><strong><span>只有符号位相反</span></strong></p></li><li><p><span>移码大真值就大，移码小真值就小</span></p><ul><li><span>移码全为0：−2n</span></li><li><span>移码全为1：2n−1</span></li></ul></li><li><p><span>移码的0唯一</span></p></li></ul><h2 id='定点数的运算'><span>定点数的运算</span></h2><p><span>移位</span></p><p><span>算术移位</span></p><p><span>机器码采用有符号数，符号位不参与</span></p><ul><li><p><span>正数</span></p><ul><li><span>空位补0</span></li></ul></li><li><p><span>负数</span></p><ul><li><p><span>原码：0</span></p></li><li><p><span>补码：</span></p><ul><li><span>左移：0</span></li><li><span>右移：1</span></li></ul></li><li><p><span>反码：1</span></p></li></ul></li></ul><p>&nbsp;</p><p><span>逻辑移位</span></p><p><span>机器码采用</span><strong><span>无符号数</span></strong><span>，直接补0。</span></p><p>&nbsp;</p><p><span>循环移位</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/循环移位.png" referrerpolicy="no-referrer"></p><p>&nbsp;</p><p><span>加减法</span></p><p><span>补码直接相加</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/补码例子.png" referrerpolicy="no-referrer"></p><p>&nbsp;</p><p><span>溢出的概念和判断方式</span>
+<span>大于机器所能表示的最大正数称为上溢；</span>
+<span>小于机器所能表示的最小负数称为下溢。</span>
+<span>当两个符号相同的数相加或者两个符号相异的数相减时才会发生溢出。</span></p><p>&nbsp;</p><p><span>源码一位乘法</span></p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p><span>补码Booth乘法</span></p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p><span>定点数除法</span></p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><h2 id='浮点数表示和运算'><span>浮点数表示和运算</span></h2><p><span>N=power(r,e)*M</span></p><p><span>r为阶码的底，通常为2</span></p><p><span>e为阶码 反应浮点数表示范围和小数点的实际位置，用补码或者移码表示</span></p><p><span>m尾数其位数反映小数的精度 用原码或者补码表示</span></p><p>&nbsp;</p><p><span>IEEE 754标准</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/IEEE754.png" referrerpolicy="no-referrer"></p><p>&nbsp;</p><h2 id='浮点数的运算'><span>浮点数的运算</span></h2><p><span>加减法</span></p><p><span>对阶，尾数加减，规格化，舍入，判溢出</span></p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><ul><li><p><span>有符号数</span></p><ul><li><p><span>OF：溢出标志位</span></p><ul><li><span>最高位产生的进位与次高位产生的进位异或</span></li><li><strong><span>判断有符号数的溢出</span></strong></li></ul></li><li><p><span>SF：符号标志位</span></p><ul><li><span>取运算结果的最高位</span></li></ul></li></ul></li><li><p><span>无符号数</span></p><ul><li><p><span>ZF：零标志位</span></p><ul><li><span>运算结果全部为零</span></li></ul></li><li><p><span>CF：进位标志</span></p><ul><li><span>最高位的进位信号与sub进行异或</span></li><li><span>为1代表发生了借位，产生溢出</span></li><li><span>判断无符号数的溢出</span></li></ul></li></ul></li></ul><p>&nbsp;</p><p>&nbsp;</p><h1 id='存储器'><span>存储器</span></h1><p>&nbsp;</p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/存储器层次化结构.png" referrerpolicy="no-referrer" alt="存储器层次化结构"></p><p>&nbsp;</p><p>&nbsp;</p><p><span>存储器的分类--层次</span></p><p><span>高速缓存cache，主存储器（主存，内存），辅助存储器（辅存，外存）</span></p><p>&nbsp;</p><p><span>CAM 相联存储器 ”快表“就是相联存储器</span></p><p><span>RAM随机存储器 </span></p><p><span>串行访问存储器：读写某个存储单元所需时间与存储单元物理位置无关</span></p><p><span>SAM顺序存储器</span></p><p><span>DAM直接存取存储器 既有随机存取特性也有顺序存取特性，先直接选取信息所在区域如何顺序方式存取</span></p><p>&nbsp;</p><p><span>读写存储器和只读存储器ROM</span></p><p>&nbsp;</p><p><span>信息可保存性</span></p><p><span>断电后消失的存储器 易失存储器（主存，cache）</span></p><p><span>断电后存储信息依然保持的存储器 非易失性存储器（磁盘，光盘）</span></p><p>&nbsp;</p><p><span>信息读出后，原存储信息被破坏――破坏性读出（如DRAM芯片，读出数据后要进行重写)</span></p><p><span>信息读出后，原存储信息不被破坏――非破坏性读出（如SRAM芯片、磁盘、光盘)</span></p><p>&nbsp;</p><p><span>存储器性能指标</span></p><p><span>存储容量：存储字数*字长 （如1M</span><span>*</span><span>8位）  MDR位数反应存储字长</span></p><p><span>单位成本 每位价格=总成本/总容量</span></p><p><span>存储速度：数据传输率=数据的宽度/存储周期          数据的宽度即存储字长</span></p><p>&nbsp;</p><p>&nbsp;</p><p><span>①存取时间(Ta）:存取时间是指从启动一次存储器操作到完成该操作所经历的时间，分为读出时间和写入时间。</span>
+<span>②存取周期(Tm):存取周期又称为读写周期或访问周期。它是指存储器进行一次完整的读写操作所需的全部时间，即连续两次独立地访问存储器操作(读或写操作）之间所需的最小时间间隔。</span>
+<span>主存带宽（Bm）:主存带宽又称数据传输率，表示每秒从主存进出信息的最大数量，单位为字/秒、字节/秒(B/s）或位/秒（b/s） 。</span></p><p>&nbsp;</p><p>&nbsp;</p><p><span>总容量等于 存储单元的个数*存储字长</span></p><p>&nbsp;</p><p><span>寻址 字节寻址</span></p><p><span>按字寻址</span></p><p><span>按半字寻址</span></p><p><span>按双字寻址</span></p><p>&nbsp;</p><p><span>DRAM（动态）和SRAM（静态）</span></p><p><span>区别存储元不一样，前者是栅极电容，后者是双稳态触发器</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/DRAM和SRAM.png" referrerpolicy="no-referrer"></p><p>&nbsp;</p><p><span>DRAM的刷新</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/DRAM的刷新.png" referrerpolicy="no-referrer"></p><p>&nbsp;</p><p>&nbsp;</p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/ROM.png" referrerpolicy="no-referrer" alt="只读存储器"></p><p>&nbsp;</p><p>&nbsp;</p><h1 id='系统总线'><span>系统总线</span></h1><p><span>总线是连接各个部件的信息传输线是各个部件共享的传输介质</span></p><p>&nbsp;</p><p><span>串行总线 并行总线</span></p><p><span>单总线 </span></p><p><span>CPU双总线</span></p><p><span>存储双总线</span></p><p>&nbsp;</p><h2 id='总线分类'><span>总线分类</span></h2><p><span>片总线  芯片内部的总线</span></p><p><span>系统总线</span></p><p><span>计算机各部件之间的信息传输线 （数据总线（双向，与机器字长，存储字长有关）,地址总线（单向，与存储地址，I/O地址有关），控制总线  （有出（中断请求，总线请求）有入（存储器读，存储器写，总线允许，中断缺人）））</span></p><p>&nbsp;</p><p><span>通信总线</span></p><p><span>用于计算机系统之间或计算机系统与其它系统之间的通信</span></p><p><span>传输方式有串行和并行</span></p><p>&nbsp;</p><h2 id='总线特性-性能指标'><span>总线特性 性能指标</span></h2><h3 id='特性'><span>特性</span></h3><p>&nbsp;</p><p><span>机械特性  尺寸，形状，管脚数，排列顺序</span></p><p><span>电气特性 传输方向和有效电平范围</span></p><p><span>功能特性   每根传输线的功能（地址，数据，控制）</span></p><p><span>时间特性 信号和时序关系</span></p><p>&nbsp;</p><h3 id='总线的性能指标'><span>总线的性能指标</span></h3><p><span>总线的宽度  数据线的根数</span></p><p><span>标准传输率 每秒传输的最大字节数（MBps）</span></p><p><span>时钟同步/异步  同步，不同步</span></p><p><span>总线复用 地址线与数据线复用</span></p><p><span>信号线数  地址线、数据线和控制线的总和</span></p><p><span>总线控制方式 突发、 自动、 仲裁、逻辑、计数</span></p><p><span>其它 负载能力</span></p><h2 id='总线标准'><span> 总线标准</span></h2><p>&nbsp;</p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/总线标准.png" referrerpolicy="no-referrer" alt="总线标准"></p><p>&nbsp;</p><h2 id='总线结构'><span>总线结构</span></h2><p>&nbsp;</p><p><span>单总线结构</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/单总线结构.png" referrerpolicy="no-referrer" alt="单总线结构"></p><p>&nbsp;</p><p><span>多总线结构</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/双总线.png" referrerpolicy="no-referrer" alt="双总线"></p><p>&nbsp;</p><p><span>三总线结构</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/三总线结构.png" referrerpolicy="no-referrer" alt="三总线结构"></p><p>&nbsp;</p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/三总线2.png" referrerpolicy="no-referrer" alt="三总线2"></p><p>&nbsp;</p><p>&nbsp;</p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/四总线.png" referrerpolicy="no-referrer" alt="四总线"></p><p>&nbsp;</p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/多层pci总线结构.png" referrerpolicy="no-referrer" alt="多层pci总线结构"></p><p>&nbsp;</p><p>&nbsp;</p><h2 id='总线控制'><span>总线控制</span></h2><h3 id='判优'><span>判优</span></h3><p><span>主设备  对总线有控制权</span></p><p><span>从设备 响应从主设备发来的总线命令</span></p><p><span>总线判优控制（集中式（链式查询，计数器定时查询，独立请求方式），分布式）</span></p><p>&nbsp;</p><p><span>链式查询</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/链式查询.png" referrerpolicy="no-referrer"></p><p>&nbsp;</p><p><span>计数器定时查询</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/计数器定时查询.png" referrerpolicy="no-referrer"></p><p>&nbsp;</p><p><span>独立请求方式</span></p><p><img src="https://cdn.jsdelivr.net/gh/smartdoublej/note-img/独立请求方式.png" referrerpolicy="no-referrer"></p><p>&nbsp;</p><h2 id='总线通信控制'><span>总线通信控制</span></h2><p><span>解决通信双方协调配合问题</span></p><p><span>总线传输周期</span></p><p><span>申请分配阶段 主模块申请，总线仲裁决定</span></p><p><span>寻址阶段 主模块向从模块给出地址和命令</span></p><p><span>传数阶段 主模块和从模块交换数据</span></p><p><span>结束阶段 主模块撤销有关信息</span></p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p></div></div>
+</body>
+</html>

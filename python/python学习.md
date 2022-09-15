@@ -14,6 +14,20 @@ python -m venv /path/to/new/virtual/environment
 .\Scripts\deactivate
 ```
 
+
+
+# 面向对象
+
+原则
+
+单一类原则
+
+开放关闭原则
+
+对扩展开放对修改关闭
+
+
+
 # 字符串
 
 | in     | 成员运算符 - 如果字符串中包含给定的字符返回 True             | **'H' in a** 输出结果 True     |
