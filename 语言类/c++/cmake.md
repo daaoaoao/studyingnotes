@@ -251,3 +251,87 @@ add_library (MathFunctions ${DIR_LIB_SRCS})
 
 
 
+# 用法
+
+声明路径变量
+
+```cmake
+#声明头文件路径
+set(INC_DIR ./include)
+
+#声明链接库路径
+set(LINK_DIR ./lib)
+```
+
+
+
+引入头文件和库文件
+
+```cmake
+#引入头文件
+include_directories(${INC_DIR})
+#引入头文件和库文件
+link_directories(${LINK_DIR})
+```
+
+
+
+在CMake中，${}的语法含义是获取变量的值，这和shell中获取变量值的方式很相似。在项目中引入了头文件和库文件，这样在编译的时候才知道到哪里去寻找相应的头文件和库文件。
+
+设置编译文件
+
+```cmake
+#添加编译文件
+add_executable(TestOne cluster.cpp)
+```
+
+
+
+TestOne为我在CMake中设置的项目名称，cluster.cpp为我要编译的文件。
+
+
+
+引入第三方库
+
+```cmake
+#将第三方库链接在一起
+target_link_libraries(TestOne lib_acl_cpp.a lib_acl.a pthread)
+```
+
+需要链接的第三方库链接在一起
+
+
+
+total的CMake配置文件
+
+```cmake
+#设置cmake版本
+cmake_minimum_required(VERSION 3.15)
+
+#项目名字
+project(TestOne)
+
+#设置编译版本
+set(CMAKE_CXX_STANDARD 14)
+
+#设置头文件路径
+set(INC_DIR ./include)
+
+#设置链接库路径
+set(LINK_DIR ./lib)
+
+#引入头文件
+include_directories(${INC_DIR})
+
+#引入库文件
+link_directories(${LINK_DIR})
+
+#编译文件
+add_executable(TestOne cluster.cpp)
+
+#将第三方库连接在一起
+target_link_libraries(TestRedis lib_acl_cpp.a lib_acl.a lib_protocol.a pthread)
+```
+
+
+

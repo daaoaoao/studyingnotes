@@ -198,6 +198,41 @@ for(const auto &fname: fnames) {
 
 
 
+## 内联命名空间的定义和使用
+
+命名空间中添加内联inline 外部命名空间中只能有一个inline
+
+```c++
+#include <iostream>
+namespace Test{
+    namespace V1{
+        void test(){
+            std::cout<<"v1 test"<<std::endl;
+        }
+    }
+    inline namespace V2{
+         void test(){
+            std::cout<<"v2 test"<<std::endl;
+        }
+    }
+}
+int main(){
+    Test::test();
+    Test::V1::test();
+}
+
+/*
+v2 test
+v1 test
+*/
+```
+
+
+
+
+
+
+
 # c14
 
 函数可以通过返回值进行推导

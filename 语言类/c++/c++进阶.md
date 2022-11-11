@@ -909,3 +909,129 @@ bitsetbitset可以高效率地对0101串，0101矩阵等等只含0/10/1的题目
 
 # 多线程
 
+
+
+
+
+
+
+# 现代c++
+
+内存管理和智能指针
+
+
+
+正则表达式
+
+
+
+并行与并发
+
+`std::thread`创建一个执行的线程实例
+
+get_id()来获取所创建线程的线程ID  使用join()来加入一个线程等
+
+
+
+互斥量与临界区
+
+`std::mutex`lock()  unlock()
+
+
+
+std::lock_guard
+
+
+
+std::unique_lock 
+
+
+
+期物
+
+Future   `std::future` 访问异步操作结果的途径 可以用来获取异步任务的结果
+
+get_future()来获取一个std::future 对象
+
+
+
+用法
+
+```c++
+#include <iostream>
+#include <future>
+#include <thread>
+
+int main()
+{
+	std::packaged_task<int()> task([]() {return 8; });
+	//获取task期物
+	std::future<int> result = task.get_future();
+
+	std::thread(std::move(task)).detach();
+
+	result.wait();
+	std::cout << result.get() << std::endl;
+}
+```
+
+
+
+
+
+条件变量
+
+`std::condition_variable`    notify_one()唤醒一个线程  notify_all() 通知所有线程
+
+
+
+原子操作与内存模型
+
+
+
+文件系统
+
+FileSystem
+
+
+
+noexcept 不可能抛出异常
+
+
+
+原始字符串字面量
+
+
+
+自定义字面量
+
+```
+// 字符串字面量自定义必须设置如下的参数列表
+std::string operator"" _wow1(const char *wow1, size_t len) {
+    return std::string(wow1)+"woooooooooow, amazing";
+}
+
+std::string operator"" _wow2 (unsigned long long i) {
+    return std::to_string(i)+"woooooooooow, amazing";
+}
+
+int main() {
+    auto str = "abc"_wow1;
+    auto num = 1_wow2;
+    std::cout << str << std::endl;
+    std::cout << num << std::endl;
+    return 0;
+}
+```
+
+自定义字面量支持四种字面量：
+
+1. 整型字面量：重载时必须使用 `unsigned long long`、`const char *`、模板字面量算符参数，在上面的代码中使用的是前者；
+2. 浮点型字面量：重载时必须使用 `long double`、`const char *`、模板字面量算符；
+3. 字符串字面量：必须使用 `(const char *, size_t)` 形式的参数表；
+4. 字符字面量：参数只能是 `char`, `wchar_t`, `char16_t`, `char32_t` 这几种类型。
+
+重载双引号
+
+
+
