@@ -84,3 +84,13 @@ git fetch origin aaaaa 从远程获取最新版本到本地
 
 
 [VSCode 云同步扩展设置 Settings Sync 插件 - 荔枝ee - 博客园 (cnblogs.com)](https://www.cnblogs.com/lychee/p/11214032.html)
+
+
+
+
+
+# GIT图床
+
+https://cdn.jsdelivr.net/gh/smartdoublej/note-img
+
+cdn代理
