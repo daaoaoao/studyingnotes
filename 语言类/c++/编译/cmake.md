@@ -119,7 +119,7 @@ add_executable(cmaketest main.cpp)
 
 ### 同一目录，多个源文件
 
-![image-20220412134438859](../img/image-20220412134438859.png)
+![image-20220412134438859](../../../img/image-20220412134438859.png)
 
 
 
