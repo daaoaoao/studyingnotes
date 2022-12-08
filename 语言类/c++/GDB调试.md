@@ -270,11 +270,11 @@ GDB是Linux下非常好用且强大的调试工具。GDB可以调试C、C++、Go
 
 
 
-![image-20220420212042664](../img/image-20220420212042664.png)
+![image-20220420212042664](../../img/image-20220420212042664.png)
 
 调试开始：执行**gdb [exefilename]** ，进入gdb调试程序，其中exefilename为要调试的可执行文件名
 
-![image-20220427084803427](../img/image-20220427084803427.png)
+![image-20220427084803427](../../img/image-20220427084803427.png)
 
 
 
@@ -347,4 +347,10 @@ readelf -S main|grep debug
 其它操作：set var 变量名=变量值 （循环中用的较多） until （跳出循环）
 
 
+
+
+
+# vscode连接Linux服务器进行开发调试
+
+[VSCode远程连接Linux服务器进行开发调试 — C++远程调试—Python远程调试——【VSCode 神器 ，你值得拥有】_墨理学AI的博客-CSDN博客](https://positive.blog.csdn.net/article/details/118899103)
 

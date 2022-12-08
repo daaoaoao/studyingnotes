@@ -288,7 +288,7 @@ centos
 
 
 
-ubuntu
+## ubuntu
 
 apt install
 

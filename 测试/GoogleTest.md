@@ -58,21 +58,97 @@ ASSERT_STRCASENE(arg1, arg2); // 预期字符串不等，忽略大小写s
 
 
 
-## Global
+## 事件机制
+
+### Global
 
 创建一个继承testing::Environment的类，并实现其中的SetUp()和TearDown()两种方法，最后在main()函数中通过testing::AddGlobalTestEnvironment()进行注册
 
 
 
-## TestSuite
+### TestSuite
 
 需要创建一个与test_suite_name名称相同的类，同时需要继承testing::Test类，并实现其中的两个静态方法SetUpTestCase()以及TearDownTestCase()，分别会在第一个用例前以及最后一个用例后执行
 
 
 
-## TestCase
+### TestCase
 
 与 TestSuite 级别使用相同的类，但是需要实现的方法不同，需要实现 `SetUp()` 以及 `TearDown()` 两个函数，分别在每个测试用例的前后执行。注意，在两个测试用例中执行的内容是不会相互影响的。
+
+
+
+## GTest的断言
+
+### 布尔值检验
+
+| Fatal assertion            | Nonfatal assertion         | Verifies             |
+| :------------------------- | :------------------------- | :------------------- |
+| ASSERT_TRUE(*condition*);  | EXPECT_TRUE(*condition*);  | *condition* is true  |
+| ASSERT_FALSE(*condition*); | EXPECT_FALSE(*condition*); | *condition* is false |
+
+### 数值型数据检验
+
+| Fatal assertion                  | Nonfatal assertion               | Verifies               |
+| :------------------------------- | :------------------------------- | :--------------------- |
+| ASSERT_EQ(*expected*, *actual*); | EXPECT_EQ(*expected*, *actual*); | *expected* == *actual* |
+| ASSERT_NE(*val1*, *val2*);       | EXPECT_NE(*val1*, *val2*);       | *val1* != *val2*       |
+| ASSERT_LT(*val1*, *val2*);       | EXPECT_LT(*val1*, *val2*);       | *val1* < *val2*        |
+| ASSERT_LE(*val1*, *val2*);       | EXPECT_LE(*val1*, *val2*);       | *val1* <= *val2*       |
+| ASSERT_GT(*val1*, *val2*);       | EXPECT_GT(*val1*, *val2*);       | *val1* > *val2*        |
+| ASSERT_GE(*val1*, *val2*);       | EXPECT_GE(*val1*, *val2*);       | *val1* >= *val2*       |
+
+### 字符串比较
+
+| Fatal assertion                                 | Nonfatal assertion                              | Verifies                            |
+| :---------------------------------------------- | :---------------------------------------------- | :---------------------------------- |
+| ASSERT_STREQ(*expected_str*, *actual_str*);     | EXPECT_STREQ(*expected_str*, *actual_str*);     | 两个C字符串有相同的内容             |
+| ASSERT_STRNE(*str1*, *str2*);                   | EXPECT_STRNE(*str1*, *str2*);                   | 两个C字符串有不同的内容             |
+| ASSERT_STRCASEEQ(*expected_str*, *actual_str*); | EXPECT_STRCASEEQ(*expected_str*, *actual_str*); | 两个C字符串有相同的内容，忽略大小写 |
+| ASSERT_STRCASENE(*str1*, *str2*);               | EXPECT_STRCASENE(*str1*, *str2*);               | 两个C字符串有不同的内容，忽略大小写 |
+
+### 异常检查
+
+| Fatal assertion                              | Nonfatal assertion                           | Verifies                                          |
+| :------------------------------------------- | :------------------------------------------- | :------------------------------------------------ |
+| ASSERT_THROW(*statement*, *exception_type*); | EXPECT_THROW(*statement*, *exception_type*); | *statement* throws an exception of the given type |
+| ASSERT_ANY_THROW(*statement*);               | EXPECT_ANY_THROW(*statement*);               | *statement* throws an exception of any type       |
+| ASSERT_NO_THROW(*statement*);                | EXPECT_NO_THROW(*statement*);                | *statement* doesn't throw any exception           |
+
+### 浮点型检查
+
+| Fatal assertion                       | Nonfatal assertion                    | Verifies                               |
+| :------------------------------------ | :------------------------------------ | :------------------------------------- |
+| ASSERT_FLOAT_EQ(*expected, actual*);  | EXPECT_FLOAT_EQ(*expected, actual*);  | the two float values are almost equal  |
+| ASSERT_DOUBLE_EQ(*expected, actual*); | EXPECT_DOUBLE_EQ(*expected, actual*); | the two double values are almost equal |
+
+
+
+| Fatal assertion                       | Nonfatal assertion                    | Verifies                                                     |
+| :------------------------------------ | :------------------------------------ | :----------------------------------------------------------- |
+| ASSERT_NEAR(*val1, val2, abs_error*); | EXPECT_NEAR*(val1, val2, abs_error*); | the difference between *val1* and *val2* doesn't exceed the given absolute error |
+
+
+
+### other
+
+类型检查和谓词检查
+
+
+
+
+
+
+
+
+
+# 使用过程
+
+cmake进行编译
+
+windows平台下进行 .h .lib .dll文件就可以配置使用
+
+
 
 
 
@@ -93,3 +169,6 @@ ASSERT_STRCASENE(arg1, arg2); // 预期字符串不等，忽略大小写s
 [C++ TestMate](https://github.com/matepek/vscode-catch2-test-adapter)是一个 VS Code 扩展，允许在树视图中查看 GoogleTest，并运行/调试您的测试。
 
 [Cornichon](https://pypi.org/project/cornichon/)是一个小型 Gherkin DSL 解析器，可为 GoogleTest 生成存根代码。
+
+
+
