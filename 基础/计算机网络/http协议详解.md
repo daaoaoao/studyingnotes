@@ -1,0 +1,125 @@
+# Get和Post的区别
+
+都是HTTP协议中发送请求的方法
+
+## Get
+
+请求一个指定资源的表达方式，使用Get的请求应该只被用于获取数据
+
+## Post
+
+用于将实体提交到指定的资源，通常导致在服务器上的状态变化或副作用
+
+本质上都是Tcp链接的，并无差别
+
+但是由于Http的规定和浏览器/服务器的限制，导致在应用过程中会提现一些区别。
+
+
+
+## 区别
+
+- GET在浏览器回退时是无害的，而POST会再次提交请求。
+- GET产生的URL地址可以被Bookmark，而POST不可以。
+- GET请求会被浏览器主动cache，而POST不会，除非手动设置。GET可以被缓存，POST请求不会被缓存
+- GET请求只能进行url编码，而POST支持多种编码方式。
+- GET请求参数会被完整保留在浏览器历史记录里，而POST中的参数不会被保留。
+- GET请求在URL中传送的参数是有长度限制的，而POST没有。
+- 对参数的数据类型，GET只接受ASCII字符，而POST没有限制。
+- GET比POST更不安全，因为参数直接暴露在URL上，所以不能用来传递敏感信息。
+- GET参数通过URL传递，POST放在Request body中
+
+### 参数位置
+
+同一个传输层的协议，传输没有什么区别
+
+方法名不同
+
+`POST /url HTTP/1.1 \r\n`
+
+`GET /url HTTP/1.1 \r\n`
+
+当携带参数时，GET请求是放在url中的，POST这放在body中
+
+`GET` 方法简约版报文是这样的
+
+```
+GET /index.html?name=qiming.c&age=22 HTTP/1.1
+Host: localhost
+```
+
+`POST `方法简约版报文是这样的
+
+```
+POST /index.html HTTP/1.1
+Host: localhost
+Content-Type: application/x-www-form-urlencoded
+
+name=qiming.c&age=22
+```
+
+注意：这里只是约定，并不属于`HTTP`规范，相反的，我们可以在`POST`请求中`url`中写入参数，或者`GET`请求中的`body`携带参数
+
+
+
+### 参数长度
+
+`HTTP `协议没有`Body`和 `URL` 的长度限制，对 `URL `限制的大多是浏览器和服务器的原因
+
+`IE`对`URL`长度的限制是2083字节(2K+35)。对于其他浏览器，如Netscape、FireFox等，理论上没有长度限制，其限制取决于操作系统的支持
+
+这里限制的是整个`URL`长度，而不仅仅是参数值的长度
+
+服务器处理长` URL` 要消耗比较多的资源，为了性能和安全考虑，会给 `URL` 长度加限制
+
+
+
+### 安全
+
+`POST `比` GET` 安全，因为数据在地址栏上不可见
+
+然而，从传输的角度来说，他们都是不安全的，因为` HTTP` 在网络上是明文传输的，只要在网络节点上捉包，就能完整地获取数据报文
+
+只有使用`HTTPS`才能加密安全
+
+### 数据包
+
+对于`GET`方式的请求，浏览器会把`http header`和`data`一并发送出去，服务器响应200（返回数据）
+
+对于`POST`，浏览器先发送`header`，服务器响应100 `continue`，浏览器再发送`data`，服务器响应200 ok
+
+并不是所有浏览器都会在`POST`中发送两次包，`Firefox`就只发送一次
+
+
+
+>引用
+>
+>[面试官：说一下 GET 和 POST 的区别？ · Issue #145 · febobo/web-interview (github.com)](https://github.com/febobo/web-interview/issues/145)
+>
+>[HTTP 方法：GET 对比 POST | 菜鸟教程 (runoob.com)](https://www.runoob.com/tags/html-httpmethods.html)
+
+
+
+
+
+## form表单中的区别
+
+Form 中的 get 和 post 方法，在数据传输过程中分别对应了 HTTP 协议中的 GET 和 POST 方法。二者主要区别如下：
+
+-  1、Get 是用来从服务器上获得数据，而 Post 是用来向服务器上传递数据。
+-  2、Get 将表单中数据的按照 variable=value 的形式，添加到 action 所指向的 URL 后面，并且两者使用“?”连接，而各个变量之间使用“&”连接；Post 是将表单中的数据放在 form 的数据体中，按照变量和值相对应的方式，传递到 action 所指向 URL。
+-  3、Get 是不安全的，因为在传输过程，数据被放在请求的 URL 中，而如今现有的很多服务器、代理服务器或者用户代理都会将请求URL记录到日志文件中，然后放在某个地方，这样就可能会有一些隐私的信息被第三方看到。另外，用户也可以在浏览器上直接看到提交的数据，一些系统内部消息将会一同显示在用户面前。Post 的所有操作对用户来说都是不可见的。
+-  4、Get 传输的数据量小，这主要是因为受 URL 长度限制；而 Post 可以传输大量的数据，所以在上传文件只能使用 Post（当然还有一个原因，将在后面的提到）。
+-  5、Get 限制 Form 表单的数据集的值必须为 ASCII 字符；而 Post 支持整个 ISO10646 字符集。
+-  6、Get 是 Form 的默认方法。
+
+使用 Post 传输的数据，可以通过设置编码的方式正确转化中文；而 Get 传输的数据却没有变化。在以后的程序中，我们一定要注意这一点。
+
+
+
+
+
+# 参考文献
+
+>
+>
+>[febobo/web-interview: 语音打卡社群维护的前端面试题库，包含不限于Vue面试题，React面试题，JS面试题，HTTP面试题，工程化面试题，CSS面试题，算法面试题，大厂面试题，高频面试题 (github.com)](https://github.com/febobo/web-interview)
