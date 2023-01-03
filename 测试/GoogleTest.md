@@ -24,7 +24,7 @@ ASSERT_*
 
 执行失败不会导致测试函数返回
 
-`ASSERT_TRUE()`、`ASSERT_FALSE()`、`EXPECT_EQ()`、`EXPECT_NE()`、`EXPECT_LT()`、`EXPECT_LE()`、`EXPECT_GT()`和`EXPECT_GE()`。
+`EXPECT_EQ()`、`EXPECT_NE()`、`EXPECT_LT()`、`EXPECT_LE()`、`EXPECT_GT()`和`EXPECT_GE()`。
 
 
 
@@ -147,6 +147,8 @@ ASSERT_STRCASENE(arg1, arg2); // 预期字符串不等，忽略大小写s
 cmake进行编译
 
 windows平台下进行 .h .lib .dll文件就可以配置使用
+
+在编译时注意mt md 多线程区别
 
 
 
