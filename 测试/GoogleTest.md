@@ -150,6 +150,8 @@ windows平台下进行 .h .lib .dll文件就可以配置使用
 
 在编译时注意mt md 多线程区别
 
+> [windows下编译使用googletest - 简书 (jianshu.com)](https://www.jianshu.com/p/e828b0d48ad3)
+
 
 
 
