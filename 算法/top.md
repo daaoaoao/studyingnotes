@@ -1,4 +1,16 @@
-633 两数平方和
+# KMP算法
+
+> [字符串匹配的KMP算法 - 阮一峰的网络日志 (ruanyifeng.com)](https://www.ruanyifeng.com/blog/2013/05/Knuth–Morris–Pratt_algorithm.html)
+
+理解部分匹配表里面的值
+
+一般步骤先计算匹配表，再进行匹配
+
+
+
+
+
+# 633 两数平方和
 
 ```c++
 class Solution {
