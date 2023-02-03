@@ -138,6 +138,32 @@ ASSERT_STRCASENE(arg1, arg2); // 预期字符串不等，忽略大小写s
 
 
 
+# TEST,TEST_F,TEST_P的区别
+
+## TEST
+
+适合给static或者全局函数或者简单类编写单元测试
+
+## TEST_F
+
+测试夹具：对多个测试使用相同的数据配置。多个测试来操作类似的数据，可以使用测试夹具，允许为几个不同的测试重复使用相同的对象配置
+
+可以编写默认构造函数或者setUP()来为测试准备共同对象
+
+如果需要，写一个析构函数或TearDown（）函数来释放你在SetUp（）中分配的任何资源。
+
+
+
+## TEST_P
+
+当您想使用参数编写测试时，TEST_P（）非常有用。您可以使用test_P（）编写一个测试，而不是使用不同的参数值编写多个测试，test_P（）使用GetParam（）并可以使用INSTANTIATE_test_SUITE_P（）进行实例化。示例测试. [ Example test](https://github.com/google/googletest/blob/eafd2a91bb0c4fd626aae63ae852812fbd4999f2/googletest/test/googletest-param-test-test.cc#L679)
+
+[ googletest - What is the difference between TEST, TEST_F and TEST_P? - Stack Overflow](https://stackoverflow.com/questions/58600728/what-is-the-difference-between-test-test-f-and-test-p)
+
+TEST_F与TEST的区别是，TEST_F提供了一个初始化函数（SetUp）和一个清理函数(TearDown)，在TEST_F中使用的变量可以在初始化函数SetUp中初始化，在TearDown中销毁，并且所有的TEST_F是互相独立的，都是在初始化以后的状态开始运行，一个TEST_F不会影响另一个TEST_F所使用的数据
+
+
+
 
 
 
