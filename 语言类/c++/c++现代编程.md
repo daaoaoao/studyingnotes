@@ -657,7 +657,7 @@ int main() {
     } else if (res.ec == std::errc::invalid_argument) {
         cout << "invalid" << endl;
     }
-    str = std::string("12.34);
+    str = std::string("12.34");
     double val = 0;
     const auto format = std::chars_format::general;
     res = std::from_chars(str.data(), str.data() + str.size(), value, format);
@@ -671,6 +671,12 @@ int main() {
 ```
 
 ## std::variant
+
+是一种新的多态类型，存储不同类型的值，并且可以在运行时动态地改变其存储的值的类型
+
+通过函数`std::get<int>(v)` 等获取v里面的值，v里面就一个值，动态的变化
+
+使用std::holds_alternative函数检查variant中存储的值的类型：
 
 C++17增加std::variant实现类似union的功能，但却比union更高级，举个例子union里面不能有string这种类型，但std::variant却可以，还可以支持更多复杂类型
 
@@ -704,6 +710,8 @@ int main() { // c++17可编译
 函数返回对象
 
 有一种办法是返回对象指针，异常情况下就可以返回nullptr啦，但是这就涉及到了内存管理，也许你会使用智能指针，但这里其实有更方便的办法就是std::optional
+
+has_value()来判断对应的optional是否处于设置值的状态
 
 
 
