@@ -270,11 +270,11 @@ GDB是Linux下非常好用且强大的调试工具。GDB可以调试C、C++、Go
 
 
 
-![image-20220420212042664](../../img/image-20220420212042664.png)
+![image-20220420212042664](../../../img/image-20220420212042664.png)
 
 调试开始：执行**gdb [exefilename]** ，进入gdb调试程序，其中exefilename为要调试的可执行文件名
 
-![image-20220427084803427](../../img/image-20220427084803427.png)
+![image-20220427084803427](../../../img/image-20220427084803427.png)
 
 
 
@@ -294,13 +294,13 @@ readelf -S main|grep debug
 
  gdb 常见的调试命令如下：
 
- 启动和退出：gdb 
+启动和退出：gdb 
 
 可执行程序 quit/q 
 
 给程序设置参数/获取设置参数：set args 10 20 show args
 
- GDB 使用帮助：help 
+GDB 使用帮助：help 
 
 查看当前文件代码：list/l （从默认位置显示）list/l 行号 （从指定的行显示）list/l 函数名（从指定的函数显示） 
 
@@ -314,19 +314,19 @@ readelf -S main|grep debug
 
 删除断点：d/del/delete
 
- 断点编号 设置断点无效：dis/disable 
+断点编号 设置断点无效：dis/disable 
 
 断点编号 设置断点生效：ena/enable
 
- 断点编号 设置条件断点（一般用在循环的位置） b/break 10 if i==5
+断点编号 设置条件断点（一般用在循环的位置） b/break 10 if i==5
 
- 运行GDB程序：start（程序停在第一行） run（遇到断点才停） 
+运行GDB程序：start（程序停在第一行） run（遇到断点才停） 
 
 继续运行，到下一个断点停：c/continue 
 
 向下执行一行代码（不会进入函数体）：n/next
 
- 变量操作：p/print 变量名（打印变量值） ptype 变量名（打印变量类型） 
+变量操作：p/print 变量名（打印变量值） ptype 变量名（打印变量类型） 
 
 向下单步调试（遇到函数进入函数体）：s/step finish（跳出函数体） 
 
