@@ -14,6 +14,14 @@ html使用JavaScript \<script>元素
 
 
 
+外部javascript文件不使用<script> 直接写代码
+
+HTML 输出流中使用 document.write，相当于添加在原有html代码中添加一串html代码。而如果在文档加载后使用（如使用函数），会覆盖整个文档。
+
+
+
+
+
 增加了严格模式
 
 "use strict"
@@ -23,6 +31,24 @@ html使用JavaScript \<script>元素
 
 
 关键字与保留字
+
+
+
+
+
+# JavaScript输出
+
+显示数据
+
+window.alert()弹出警告框
+
+document.write()方法将内容写到HTML文档中。
+
+innerHTML写入到HTML元素中
+
+console.log()写入到浏览器的控制台
+
+
 
 
 
