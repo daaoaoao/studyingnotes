@@ -98,3 +98,7 @@ struct epoll_event结构描述一个文件描述符的epoll行为。在使用epo
 
 
 
+## int epoll_wait
+
+
+
