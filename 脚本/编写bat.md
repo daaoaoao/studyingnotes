@@ -6,6 +6,8 @@
 
 [BAT脚本编写教程简单入门篇 - xpwi - 博客园 (cnblogs.com)](https://www.cnblogs.com/xpwi/p/9628613.html)
 
+[常用脚本学习手册——Bat脚本 - 秋落雨微凉 - 博客园 (cnblogs.com)](https://www.cnblogs.com/qiuluoyuweiliang/p/17288356.html)
+
 
 
 # windows添加计划任务
