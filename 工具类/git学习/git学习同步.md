@@ -81,7 +81,7 @@ git fetch origin aaaaa 从远程获取最新版本到本地
 
 # 同步vs插件
 
-
+vs自带同步功能了
 
 [VSCode 云同步扩展设置 Settings Sync 插件 - 荔枝ee - 博客园 (cnblogs.com)](https://www.cnblogs.com/lychee/p/11214032.html)
 
