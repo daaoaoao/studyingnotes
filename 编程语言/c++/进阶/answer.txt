@@ -1,0 +1,66 @@
+numbers = []
+count = 0
+i = 500
+
+while count < 6 and i > 0:
+    if i % 13 == 0 or i % 17 == 0:
+        numbers.append(i)
+        count += 1
+    i -= 1
+
+sum_of_numbers = sum(numbers)
+print("最大的6个能被13或17整除的自然数之和为:", sum_of_numbers)
+
+
+
+
+
+
+
+
+
+
+
+
+第六题
+isomorphic_numbers = []
+for num in range(1, 1001):
+    square = num ** 2
+    square_str = str(square)
+    if str(num) == square_str[-len(str(num)):]:
+        isomorphic_numbers.append(num)
+
+print("1-1000之间的同构数:", isomorphic_numbers)
+
+
+第七题
+# 从键盘输入n个数
+n = int(input("请输入数字的个数："))
+
+# 从键盘输入数字并保存到数组中
+numbers = []
+for i in range(n):
+    num = float(input("请输入第 {} 个数字：".format(i+1)))
+    numbers.append(num)
+
+# 计算偶下标元素的和
+even_sum = sum(numbers[::2])
+
+# 计算n个数中的最大值及其下标
+max_number = max(numbers)
+max_index = numbers.index(max_number)
+
+# 计算正数的平均值
+positive_numbers = [num for num in numbers if num > 0]
+positive_avg = sum(positive_numbers) / len(positive_numbers) if positive_numbers else 0
+
+# 计算负数的平均值
+negative_numbers = [num for num in numbers if num < 0]
+negative_avg = sum(negative_numbers) / len(negative_numbers) if negative_numbers else 0
+
+# 输出结果
+print("偶下标元素的和：", even_sum)
+print("n个数中的最大值：", max_number)
+print("n个数中的最大值的下标：", max_index)
+print("正数的平均值：", positive_avg)
+print("负数的平均值：", negative_avg)

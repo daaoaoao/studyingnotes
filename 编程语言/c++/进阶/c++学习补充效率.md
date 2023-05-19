@@ -474,6 +474,19 @@ void View::SetObserver() {
 
 
 
+# 对于new和malloc的理解
+new和malloc都是动态内存分配函数。其中，new是C++中的操作符，malloc是C语言中的函数。new会调用对象的构造函数，而malloc不会。使用new可以简化代码，并且更加类型安全。
+new和malloc区别：
+
+分配内存的位置：malloc是从堆上动态分配内存，new是从自由存储区为对象动态分配内存。自由存储区的位置取决于operator new的实现。自由存储区不仅可以为堆，还可以是静态存储区，这都看operator new在哪里为对象分配内存。
+返回类型安全性：malloc内存分配成功后返回void*，然后再强制类型转换为需要的类型；new操作符分配内存成功后返回与对象类型相匹配的指针类型；因此new是符合类型安全的操作符。
+内存分配失败返回值：malloc内存分配失败后返回NULL。new分配内存失败则会抛异常（bac_alloc）。
+分配内存的大小的计算：使用new操作符申请内存分配时无须指定内存块的大小，编译器会根据类型信息自行计算，而malloc则需要显式地指出所需内存的尺寸。
+是否可以被重载：opeartor new /operator delete可以被重载。而malloc/free则不能重载。
+
+## new是在堆上分配内存，malloc是在自由存储区分配内存
+new分配内存失败会抛出bac_alloc异常，malloc分配内存失败会返回NULL。
+如果加上std::nothrow关键字，A* p = new (std::nothrow) A;，new 就不会抛出异常而是会返回空指针。
 
 
 
