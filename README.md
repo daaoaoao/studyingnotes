@@ -30,6 +30,20 @@
 
 
 
+仓库笔记目录：
+
+| 项目        | 地址                                                         |
+| ----------- | ------------------------------------------------------------ |
+| c plus plus | [daaoaoao/cplusplusnote (github.com)](https://github.com/daaoaoao/cplusplusnote) |
+| python      |                                                              |
+| 前端        |                                                              |
+| Rust        |                                                              |
+| Go          |                                                              |
+| AI          |                                                              |
+| 算法        |                                                              |
+
+
+
 
 
 

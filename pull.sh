@@ -1,5 +1,5 @@
 now=$(data"+%Y-%m-%d")
-pathDir=D:/workstudy/studyingnotes
+pathDir=$(pwd)
 echo "Change Directory to $pathDir"
 cd $pathDir
 echo "pushing to git"
