@@ -35,12 +35,13 @@
 | 项目        | 地址                                                         |
 | ----------- | ------------------------------------------------------------ |
 | c plus plus | [daaoaoao/cplusplusnote (github.com)](https://github.com/daaoaoao/cplusplusnote) |
-| python      |                                                              |
+| python      | [daaoaoao/Python-Notes: 关于Python学习相关的Notes (github.com)](https://github.com/daaoaoao/Python-Notes) |
 | 前端        |                                                              |
+| C#          |                                                              |
 | Rust        |                                                              |
-| Go          |                                                              |
+| Go          | [daaoaoao/GO-Note: 关于GO的学习笔记和资料 (github.com)](https://github.com/daaoaoao/GO-Note) |
 | AI          |                                                              |
-| 算法        |                                                              |
+| 算法        | [daaoaoao/algorithm_study (github.com)](https://github.com/daaoaoao/algorithm_study) |
 
 
 
